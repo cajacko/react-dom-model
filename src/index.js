@@ -108,5 +108,5 @@ function startServer(port = 8097) {
   };
 }
 
-module.exports = () => startServer(process.env.PORT || 8097);
+startServer(process.env.PORT || 8097);
 

@@ -36,7 +36,7 @@ class Store extends EventEmitter {
     this._eventTimer = null;
   }
 
-  emit(event: string): boolean {
+  emit(event) {
     if (this._eventQueue.indexOf(event) !== -1) {
       // to appease flow
       return true;

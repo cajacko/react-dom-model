@@ -1,19 +1,7 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @flow
- */
-'use strict';
-
-/**
  * Get a enhanced/artificial type string based on the object instance
  */
-function getPropType(data: Object): string | null {
+function getPropType(data) {
   if (!data) {
     return null;
   }
@@ -49,7 +37,7 @@ function getPropType(data: Object): string | null {
 /**
  * Generate the dehydrated metadata for complex object instances
  */
-function createDehydrated(type: string, data: Object, cleaned: Array<Array<string>>, path: Array<string>): Object {
+function createDehydrated(type, data, cleaned, path) {
   var meta = {};
 
   if (type === 'array' || type === 'typed_array') {
@@ -88,7 +76,7 @@ function createDehydrated(type: string, data: Object, cleaned: Array<Array<strin
  * }
  * and cleaned = [["some", "attr"], ["other"]]
  */
-function dehydrate(data: Object, cleaned: Array<Array<string>>, path?: Array<string> = [], level?: number = 0): string | Object {
+function dehydrate(data, cleaned, path, level) {
 
   var type = getPropType(data);
 

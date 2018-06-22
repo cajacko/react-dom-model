@@ -2,8 +2,18 @@
   "name": "react-tree-view",
   "version": "0.1.0",
   "description": "Get the React DOM as a JS object from a node application",
+  "scripts": {
+    "start":" node src/index.js"
+  },
   "main": "index.js",
   "author": "Charlie Jackson <contact@charliejackson.com>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "es6-symbol": "3.0.2",
+    "fbjs": "0.5.1",
+    "immutable": "3.7.6",
+    "object-assign": "4.0.1",
+    "ws": "^3.3.1"
+  }
 }
