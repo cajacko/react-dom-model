@@ -1,0 +1,9 @@
+{
+  "name": "react-tree-view",
+  "version": "0.1.0",
+  "description": "Get the React DOM as a JS object from a node application",
+  "main": "index.js",
+  "author": "Charlie Jackson <contact@charliejackson.com>",
+  "license": "MIT",
+  "private": false
+}
