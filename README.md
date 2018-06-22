@@ -1,4 +1,4 @@
-# react-tree-view
+# react-dom-model
 
 ## Notes and some things we may want to support
 Every native element will get given
