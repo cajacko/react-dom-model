@@ -232,7 +232,7 @@ class Bridge {
     this._inspectables.delete(id);
   }
 
-  on(evt, fnFn) {
+  on(evt, fn) {
     if (!this._listeners[evt]) {
       this._listeners[evt] = [fn];
     } else {
@@ -240,7 +240,7 @@ class Bridge {
     }
   }
 
-  off(evt, fnFn) {
+  off(evt, fn) {
     if (!this._listeners[evt]) {
       return;
     }
@@ -250,7 +250,7 @@ class Bridge {
     }
   }
 
-  once(evt, fnFn) {
+  once(evt, fn) {
     var self = this;
     var listener = function() {
       fn.apply(this, arguments);
