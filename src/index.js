@@ -1,112 +1,104 @@
-var ws = require('ws');
-var Store = require('./Store');
-var Bridge = require('./Bridge');
-require('./test');
-const { reactHasLoaded, getStore } = require('./process');
+let store = null;
+let reactHasLoaded = false;
+let hasSetStore = null;
+let whenReactHasLoaded = null;
 
-function reload(wall) {
-  const _bridge = new Bridge(wall);
-  const _store = new Store(_bridge);
+const ReactNativeComponents = ['View', 'TouchableOpacity'];
 
-  getStore(_store);
-
-  _store.on('connected', () => {
-    reactHasLoaded();
-  });
-}
-
-function onDisconnected() {
-  console.log('waiting for react to connect');
-}
-
-function onError(e) {
-  var message;
-
-  if (e.code === 'EADDRINUSE') {
-    message = 'Another instance of DevTools is running';
-  } else {
-    message = `Unknown error (${e.message})`;
+const isReady = new Promise((resolve) => {
+  const resolveIfReady = () => {
+    if (store && reactHasLoaded) {
+      resolve();
+    }
   }
 
-  console.log(message);
+  hasSetStore = resolveIfReady;
+  whenReactHasLoaded = resolveIfReady;
+})
+
+exports.getStore = (storeInstance) => {
+  store = storeInstance;
+  hasSetStore();
 }
 
-function initialize(socket) {
-  var listeners = [];
-  socket.onmessage = evt => {
-    var data = JSON.parse(evt.data);
-    listeners.forEach(fn => fn(data));
-  };
-
-  const wall = {
-    listen(fn) {
-      listeners.push(fn);
-    },
-    send(data) {
-      if (socket.readyState === socket.OPEN) {
-        socket.send(JSON.stringify(data));
-      }
-    },
-    disconnect() {
-      socket.close();
-    },
-  };
-
-  console.log('Connected');
-  reload(wall);
+exports.reactHasLoaded = () => {
+  reactHasLoaded = true;
+  whenReactHasLoaded();
 }
 
-var restartTimeout = null;
+exports.isReady = isReady;
 
-function startServer(port = 8097) {
-  var httpServer = require('http').createServer();
-  var server = new ws.Server({ server: httpServer });
-  var connected = false;
-  server.on('connection', socket => {
-    if (connected) {
-      connected.close();
-      console.warn(
-        'Only one connection allowed at a time.',
-        'Closing the previous connection'
-      );
-    }
-    connected = socket;
-    socket.onerror = err => {
-      connected = false;
-      onDisconnected();
-      console.error('Error with websocket connection', err);
-    };
-    socket.onclose = () => {
-      connected = false;
-      onDisconnected();
-      console.log('Connection to RN closed');
-    };
-    initialize(socket);
-  });
-
-  server.on('error', e => {
-    onError(e);
-    console.error('Failed to start the DevTools server', e);
-    restartTimeout = setTimeout(() => startServer(port), 1000);
-  });
-
-  httpServer.on('error', e => {
-    onError(e);
-    restartTimeout = setTimeout(() => startServer(port), 1000);
-  });
-
-  httpServer.listen(port);
+const processTree = (tree) => {
+  if (tree.props && tree.props.children) delete tree.props.children;
 
   return {
-    close: function() {
-      connected = false;
-      onDisconnected();
-      clearTimeout(restartTimeout);
-      server.close();
-      httpServer.close();
-    },
-  };
+    component: tree.name,
+    props: tree.props,
+    children: tree.children,
+  }
 }
 
-startServer(process.env.PORT || 8097);
+const getTreeWithChildren = (tree1, idsBySelector, propsById, childrenById, typeByID) => {
+  const tree = processTree(tree1);
+  const { children } = tree;
 
+  if (!children || !children.length || !Array.isArray(children)) return tree;
+
+  tree.children = tree.children.map((id) => {
+    const node = store.get(id).toJS();
+
+    if (tree.props && tree.props.selectors) {
+      tree.props.selectors.split(' ').forEach((selector) => {
+        if (!ReactNativeComponents.includes(tree.component)) return;
+        if (!tree.props || !tree.props.testID) return;
+
+        const { testID } = tree.props;
+
+        if (!idsBySelector[selector]) idsBySelector[selector] = [];
+
+        if (!idsBySelector[selector].includes(testID)) {
+          idsBySelector[selector].push(testID);
+        }
+
+        propsById[testID] = tree.props;
+        typeByID[testID] = tree.component;
+        childrenById[testID] = tree.children;
+      });
+    }
+
+    return getTreeWithChildren(node, idsBySelector, propsById, childrenById, typeByID);
+  });
+
+  return tree;
+}
+
+const getTree = () => {
+  if (!store) throw new Error('getTree called when store is not set, use the isReady promise to check we\'re good to go');
+
+  var roots = store.roots;
+  
+  const ids = roots.toJS();
+
+  if (!ids || !ids.length) return [];
+
+  const idsBySelector = {};
+  const propsById = {};
+  const childrenById = {};
+  const typeByID = {};
+
+  const tree = ids.map((id) => {
+    const node = store.get(id).toJS();
+
+    return getTreeWithChildren(node, idsBySelector, propsById, childrenById, typeByID);
+  });
+
+  return { tree, idsBySelector, propsById, childrenById, typeByID };
+}
+
+exports.getTreeJSON = () => {
+  return getTree();
+}
+
+const close = require('./standalone');
+
+exports.close = close;
