@@ -19,7 +19,7 @@ function reload(wall) {
 
 function onDisconnected() {
   reactHasDisconnected();
-  console.log('waiting for react to connect');
+  // console.log('waiting for react to connect');
 }
 
 function onError(e) {
@@ -31,7 +31,7 @@ function onError(e) {
     message = `Unknown error (${e.message})`;
   }
 
-  console.log(message);
+  // console.log(message);
 }
 
 function initialize(socket) {
@@ -55,7 +55,7 @@ function initialize(socket) {
     },
   };
 
-  console.log('Connected');
+  // console.log('Connected');
   reload(wall);
 }
 
@@ -68,28 +68,28 @@ function startServer(port = 8097) {
   server.on('connection', socket => {
     if (connected) {
       connected.close();
-      console.warn(
-        'Only one connection allowed at a time.',
-        'Closing the previous connection'
-      );
+      // console.warn(
+      //   'Only one connection allowed at a time.',
+      //   'Closing the previous connection'
+      // );
     }
     connected = socket;
     socket.onerror = err => {
       connected = false;
       onDisconnected();
-      console.error('Error with websocket connection', err);
+      // console.error('Error with websocket connection', err);
     };
     socket.onclose = () => {
       connected = false;
       onDisconnected();
-      console.log('Connection to RN closed');
+      // console.log('Connection to RN closed');
     };
     initialize(socket);
   });
 
   server.on('error', e => {
     onError(e);
-    console.error('Failed to start the DevTools server', e);
+    // console.error('Failed to start the DevTools server', e);
     restartTimeout = setTimeout(() => startServer(port), 1000);
   });
 
