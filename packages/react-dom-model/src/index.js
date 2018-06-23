@@ -2,6 +2,7 @@ let store = null;
 let reactHasLoaded = false;
 let hasSetStore = null;
 let whenReactHasLoaded = null;
+let close = null;
 
 const ReactNativeComponents = ['View', 'TouchableOpacity'];
 
@@ -14,7 +15,13 @@ const isReady = new Promise((resolve) => {
 
   hasSetStore = resolveIfReady;
   whenReactHasLoaded = resolveIfReady;
-})
+});
+
+exports.init = () => {
+  close = require('./react-devtools-core/src/standalone');
+
+  return isReady;
+}
 
 exports.getStore = (storeInstance) => {
   store = storeInstance;
@@ -99,6 +106,6 @@ exports.getTreeJSON = () => {
   return getTree();
 }
 
-const close = require('./react-devtools-core/src/standalone');
-
-exports.close = close;
+exports.close = () => {
+  if (close) close();
+}
