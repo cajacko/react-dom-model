@@ -1,3 +1,5 @@
+// Assert then and next get do the right things
+
 const { get, assert } = require("react-dom-model-detox/test");
 
 describe('Optimisations', () => {

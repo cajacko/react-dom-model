@@ -1,4 +1,6 @@
-const ReactNativeComponents = ['View', 'TouchableOpacity'];
+const shouldUseDOMCache = require('./shouldUseDOMCache');
+
+let cachedDom = null;
 
 const getTestIDsBySelector = (selector, { testIDByID }) => {
   const testIDs = [];
@@ -30,7 +32,7 @@ const getWithDom = (dom) => (selector) => {
   return getElements(testIDs, dom, getWithDom(dom));
 }
 
-const getWithFunc = (getTreeJSON) => (selector) => {
+const getDOM = (getTreeJSON) => {
   const testIDByID = {}; 
   const propsById = {}; 
   const childrenById = {}; 
@@ -50,13 +52,31 @@ const getWithFunc = (getTreeJSON) => (selector) => {
     }
   });
 
-  return getWithDom({
+  return {
     tree,
     testIDByID,
     propsById,
     childrenById,
     typeByID,
-  })(selector);
+  };
 }
 
-module.exports = getWithFunc;
+const getTreeJSONOrCache = (getTreeJSON) => {
+  if (!cachedDom || !shouldUseDOMCache.get()) {
+    cachedDom = getDOM(getTreeJSON);
+  }
+
+  return cachedDom;
+}
+
+const getWithFunc = (getTreeJSON) => (selector) => {
+  const dom = getTreeJSONOrCache(getTreeJSON);
+
+  return getWithDom(dom)(selector);
+}
+
+exports.resetCache = () => {
+  cachedDom = null;
+}
+
+exports.get = getWithFunc;
