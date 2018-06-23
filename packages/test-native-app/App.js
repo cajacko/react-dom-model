@@ -1,5 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { setFuncTestEnvironment } from 'react-dom-model-detox';
+
+setFuncTestEnvironment(true);
 
 export default class App extends React.Component {
   render() {
