@@ -1,5 +1,6 @@
 // Assert then and next get do the right things
 
+const { expect } = require('chai');
 const { get, assert } = require("react-dom-model-detox/test");
 
 describe('Optimisations', () => {
@@ -11,14 +12,14 @@ describe('Optimisations', () => {
         return get('#App').then((element, nextGet) => {
             nextDom = element.dom;
 
-            expect(!!nextDom).toBe(true);
-            expect(nextDom).not.toBe(dom);
+            expect(!!nextDom).to.equal(true);
+            expect(nextDom).to.not.equal(dom);
 
             return nextGet('#App');
         }).then((element, nextGet) => {
 
-            expect(element.dom).toBe(nextDom);
-            expect(element.dom).not.toBe(dom);
+            expect(element.dom).to.equal(nextDom);
+            expect(element.dom).to.not.equal(dom);
         });
     });
 });

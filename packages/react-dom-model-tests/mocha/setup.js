@@ -1,14 +1,15 @@
 const { init, reloadApp, cleanup } = require("react-dom-model-detox/test");
 const { detox } = require("../package.json");
 
-beforeAll(() => {
+before(function () {
+  this.timeout(60 * 1000);
   return init(detox);
-},60 * 1000);
+});
 
 beforeEach(() => {
   return reloadApp();
 });
 
-afterAll(() => {
+after(() => {
   return cleanup();
 });

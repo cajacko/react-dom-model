@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Whole system tests for react-dom-model packages",
   "scripts": {
-    "test": "jest"
+    "test": "mocha \"__tests__/**/*\" --file mocha/setup.js --timeout 10000"
   },
   "main": "index.js",
   "author": "Charlie Jackson <contact@charliejackson.com>",
@@ -19,11 +19,9 @@
       }
     }
   },
-  "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/jest/setupTestFrameworkScriptFile.js"
-  },
   "dependencies": {
-    "jest": "^23.1.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
     "react-dom-model-detox": "^0.1.0"
   }
 }

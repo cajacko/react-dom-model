@@ -1,8 +1,9 @@
 // Assert then and next get do the right things
 
+const { expect } = require('chai');
 const { get, assert, setUseDOMCache, refreshDOM } = require("react-dom-model-detox/test");
 
-describe('Optimisations', () => {
+describe('DOM Cache', () => {
     afterEach(() => {
         setUseDOMCache(false);
     });
@@ -15,8 +16,8 @@ describe('Optimisations', () => {
             const element2 = get('#App2');
             const element3 = get('#App3');
 
-            expect(element1.dom).toBe(element2.dom);
-            expect(element2.dom).toBe(element3.dom);
+            expect(element1.dom).to.equal(element2.dom);
+            expect(element2.dom).to.equal(element3.dom);
         });
     });
 
@@ -28,9 +29,9 @@ describe('Optimisations', () => {
             const element2 = get('#App2');
             const element3 = get('#App3');
 
-            expect(element1.dom).not.toBe(element2.dom);
-            expect(element2.dom).not.toBe(element3.dom);
-            expect(element3.dom).not.toBe(element1.dom);
+            expect(element1.dom).to.not.equal(element2.dom);
+            expect(element2.dom).to.not.equal(element3.dom);
+            expect(element3.dom).to.not.equal(element1.dom);
         });
     });
 
@@ -42,8 +43,8 @@ describe('Optimisations', () => {
             const element2 = get('#App2');
             const element3 = get('#App3');
 
-            expect(element1.dom).toBe(element2.dom);
-            expect(element2.dom).toBe(element3.dom);
+            expect(element1.dom).to.equal(element2.dom);
+            expect(element2.dom).to.equal(element3.dom);
 
             refreshDOM();
 
@@ -51,10 +52,10 @@ describe('Optimisations', () => {
             const element5 = get('#App5');
             const element6 = get('#App6');
 
-            expect(element4.dom).toBe(element5.dom);
-            expect(element5.dom).toBe(element6.dom);
+            expect(element4.dom).to.equal(element5.dom);
+            expect(element5.dom).to.equal(element6.dom);
 
-            expect(element1.dom).not.toBe(element4.dom);
+            expect(element1.dom).to.not.equal(element4.dom);
         });
     });
 })

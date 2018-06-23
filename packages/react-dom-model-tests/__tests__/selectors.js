@@ -1,3 +1,4 @@
+const { expect } = require('chai');
 const { get, assert } = require("react-dom-model-detox/test");
 
 // #elementID
