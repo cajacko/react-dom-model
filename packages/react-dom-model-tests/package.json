@@ -20,7 +20,7 @@
     }
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/jest/setup.js"
+    "setupTestFrameworkScriptFile": "<rootDir>/jest/setupTestFrameworkScriptFile.js"
   },
   "dependencies": {
     "jest": "^23.1.0",
