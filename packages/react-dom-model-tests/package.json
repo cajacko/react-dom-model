@@ -12,8 +12,8 @@
   "detox": {
     "configurations": {
       "ios.sim.debug": {
-        "binaryPath": "native/ios/build/Build/Products/Debug-iphonesimulator/reactdommodel.app",
-        "build": "xcodebuild -project native/ios/reactdommodel.xcodeproj -scheme reactdommodel -configuration Debug -sdk iphonesimulator -derivedDataPath native/ios/build",
+        "binaryPath": "../test-native-app/ios/build/Build/Products/Debug-iphonesimulator/reactdommodel.app",
+        "build": "xcodebuild -project ../test-native-app/ios/reactdommodel.xcodeproj -scheme reactdommodel -configuration Debug -sdk iphonesimulator -derivedDataPath ../test-native-app/ios/build",
         "type": "ios.simulator",
         "name": "iPhone 7"
       }
