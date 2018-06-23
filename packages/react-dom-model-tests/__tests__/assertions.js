@@ -10,9 +10,3 @@
 // stateEquals
 // stateExists
 // textIs
-
-describe('Assertions', () => {
-    it('example', () => {
-        expect(true).toBe(true);
-    });
-})

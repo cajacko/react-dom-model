@@ -8,9 +8,3 @@
 // replaceText
 // clearText
 // swipe
-
-describe('Actions', () => {
-    it('example', () => {
-        expect(true).toBe(true);
-    });
-})
