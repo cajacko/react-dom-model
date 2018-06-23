@@ -5,6 +5,10 @@ beforeAll(() => {
   return init(detox);
 },60 * 1000);
 
-beforeEach(() => reloadApp());
+beforeEach(() => {
+  return reloadApp();
+});
 
-afterAll(() => cleanup());
+afterAll(() => {
+  return cleanup();
+});

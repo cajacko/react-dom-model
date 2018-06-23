@@ -1,5 +1,5 @@
 const detox = require("detox");
-const { init } = require('react-dom-model');
+const { init,waitForIsReady } = require('react-dom-model');
 
 const initDetox = (detoxConfig) => {
     return detox.init(detoxConfig, {
@@ -11,6 +11,6 @@ const initDetox = (detoxConfig) => {
 module.exports = (detoxConfig) => {
     return Promise.all([
         initDetox(detoxConfig),
-        init()
+        init(),
     ]);
 }

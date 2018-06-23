@@ -1,39 +1,20 @@
+const { isReady, waitForIsReady } = require('./connections');
+
 let store = null;
-let reactHasLoaded = false;
-let hasSetStore = null;
-let whenReactHasLoaded = null;
 let close = null;
 
-const ReactNativeComponents = ['View', 'TouchableOpacity'];
-
-const isReady = new Promise((resolve) => {
-  const resolveIfReady = () => {
-    if (store && reactHasLoaded) {
-      resolve();
-    }
-  }
-
-  hasSetStore = resolveIfReady;
-  whenReactHasLoaded = resolveIfReady;
-});
+exports.waitForIsReady = waitForIsReady;
+exports.isReady = isReady;
 
 exports.init = () => {
   close = require('./react-devtools-core/src/standalone');
 
-  return isReady;
+  return waitForIsReady();
 }
 
-exports.getStore = (storeInstance) => {
+exports.setStore = (storeInstance) => {
   store = storeInstance;
-  hasSetStore();
 }
-
-exports.reactHasLoaded = () => {
-  reactHasLoaded = true;
-  whenReactHasLoaded();
-}
-
-exports.isReady = isReady;
 
 const processTree = (tree) => {
   if (tree.props && tree.props.children) delete tree.props.children;
@@ -45,65 +26,46 @@ const processTree = (tree) => {
   }
 }
 
-const getTreeWithChildren = (tree1, idsBySelector, propsById, childrenById, typeByID) => {
+const getTreeWithChildren = (tree1, parser) => {
   const tree = processTree(tree1);
   const { children } = tree;
 
-  if (!children || !children.length || !Array.isArray(children)) return tree;
+  if (!children || !children.length || !Array.isArray(children)) {
+    if (parser) parser(tree);
+    return tree;
+  }
 
   tree.children = tree.children.map((id) => {
     const node = store.get(id).toJS();
 
-    if (tree.props && tree.props.selectors) {
-      tree.props.selectors.split(' ').forEach((selector) => {
-        if (!ReactNativeComponents.includes(tree.component)) return;
-        if (!tree.props || !tree.props.testID) return;
+    if (parser) parser(processTree(node));
 
-        const { testID } = tree.props;
-
-        if (!idsBySelector[selector]) idsBySelector[selector] = [];
-
-        if (!idsBySelector[selector].includes(testID)) {
-          idsBySelector[selector].push(testID);
-        }
-
-        propsById[testID] = tree.props;
-        typeByID[testID] = tree.component;
-        childrenById[testID] = tree.children;
-      });
-    }
-
-    return getTreeWithChildren(node, idsBySelector, propsById, childrenById, typeByID);
+    return getTreeWithChildren(node, parser);
   });
 
   return tree;
 }
 
-const getTree = () => {
+const getTree = (parser) => {
   if (!store) throw new Error('getTree called when store is not set, use the isReady promise to check we\'re good to go');
 
   var roots = store.roots;
   
   const ids = roots.toJS();
 
-  if (!ids || !ids.length) return [];
-
-  const idsBySelector = {};
-  const propsById = {};
-  const childrenById = {};
-  const typeByID = {};
+  if (!ids || !ids.length) throw new Error('Could not get any roots, are you sure we\'re connected to the debugger');
 
   const tree = ids.map((id) => {
     const node = store.get(id).toJS();
 
-    return getTreeWithChildren(node, idsBySelector, propsById, childrenById, typeByID);
+    return getTreeWithChildren(node, parser);
   });
 
-  return { tree, idsBySelector, propsById, childrenById, typeByID };
+  return tree;
 }
 
-exports.getTreeJSON = () => {
-  return getTree();
+exports.getTreeJSON = (parser) => {
+  return getTree(parser);
 }
 
 exports.close = () => {

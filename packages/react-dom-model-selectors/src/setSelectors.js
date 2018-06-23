@@ -1,5 +1,7 @@
+let testID = 0;
+
 module.exports = (...classes) => {
-    console.log('setSelectors');
+    testID += 1;
 
     if (!classes || !classes.length) throw new Error('No selectors passed to setSelectors');
 
@@ -8,6 +10,6 @@ module.exports = (...classes) => {
     return {
         selectorID,
         selectorClasses: classes,
-        testID: selectorID,
+        testID: `reactDOMModelSelector-${testID}`,
     }
 }

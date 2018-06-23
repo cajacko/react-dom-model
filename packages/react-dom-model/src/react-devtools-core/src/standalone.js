@@ -1,20 +1,24 @@
 var ws = require('ws');
 var Store = require('../../react-devtools/frontend/Store');
 var Bridge = require('../../react-devtools/agent/Bridge');
-const { reactHasLoaded, getStore } = require('../../index');
+const { setStore } = require('../../index');
+const { storeHasDisconnected, storeHasConnected, reactHasConnected, reactHasDisconnected } = require('../../connections');
 
 function reload(wall) {
+  storeHasDisconnected();
   const _bridge = new Bridge(wall);
   const _store = new Store(_bridge);
 
-  getStore(_store);
+  setStore(_store);
 
   _store.on('connected', () => {
-    reactHasLoaded();
+    storeHasConnected();
+    reactHasConnected();
   });
 }
 
 function onDisconnected() {
+  reactHasDisconnected();
   console.log('waiting for react to connect');
 }
 
