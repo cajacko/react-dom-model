@@ -1,13 +1,10 @@
-const { init, device, cleanup } = require("detox");
+const { init, reloadApp, cleanup } = require("react-dom-model-detox/test");
 const { detox } = require("../package.json");
 
 beforeAll(() => {
-  return init(detox, {
-    initGlobals: false,
-    launchApp: true
-  });
+  return init(detox);
 },60 * 1000);
 
-beforeEach(() => device.reloadReactNative());
+beforeEach(() => reloadApp());
 
 afterAll(() => cleanup());

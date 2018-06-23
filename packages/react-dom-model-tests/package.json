@@ -23,11 +23,7 @@
     "setupTestFrameworkScriptFile": "<rootDir>/jest/setup.js"
   },
   "dependencies": {
-    "detox": "^7.4.3",
-    "detox-cli": "^7.4.0",
     "jest": "^23.1.0",
-    "react-dom-model": "*",
-    "react-dom-model-detox": "*",
-    "react-dom-model-selectors": "*"
+    "react-dom-model-detox": "^0.1.0"
   }
 }
