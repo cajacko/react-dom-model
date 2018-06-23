@@ -1,0 +1,19 @@
+{
+    "name": "react-dom-model-tests",
+    "version": "0.1.0",
+    "description": "Whole system tests for react-dom-model packages",
+    "scripts": {
+        "test": "jest"
+    },
+    "main": "index.js",
+    "author": "Charlie Jackson <contact@charliejackson.com>",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "jest": "^23.1.0",
+        "react-dom-model": "*",
+        "react-dom-model-detox": "*",
+        "react-dom-model-selectors": "*"
+      }
+  }
+  

@@ -9,8 +9,5 @@
   "main": "index.js",
   "author": "Charlie Jackson <contact@charliejackson.com>",
   "license": "MIT",
-  "private": true,
-  "devDependencies": {
-    "jest": "^23.1.0"
-  }
+  "private": true
 }
