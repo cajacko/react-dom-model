@@ -1,17 +1,23 @@
-const { isReady, getTreeJSON, close } = require('react-dom-model');
+const { init, device, cleanup, element, by, expect } = require("detox");
+// const { isReady, getTreeJSON, close } = require('react-dom-model');
 
-describe('getTreeJSON',() => {
-    beforeEach(() => {
-        return isReady;
+describe('Detox', () => {
+  it('works', () => {
+    return expect(element(by.id('testID'))).toBeVisible();
+  });
+})
 
-    });
+// describe("getTreeJSON", () => {
+//   beforeEach(() => {
+//     return isReady;
+//   });
 
-    afterEach(() => {
-        return close();
-    })
+//   afterEach(() => {
+//     return close();
+//   });
 
-    it('Works',() => {
-        const tree = getTreeJSON();
-        console.log(tree);
-    });
-});
+//   it("Works", () => {
+//     const tree = getTreeJSON();
+//     console.log(tree);
+//   });
+// });

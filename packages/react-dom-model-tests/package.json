@@ -1,19 +1,33 @@
 {
-    "name": "react-dom-model-tests",
-    "version": "0.1.0",
-    "description": "Whole system tests for react-dom-model packages",
-    "scripts": {
-        "test": "jest"
-    },
-    "main": "index.js",
-    "author": "Charlie Jackson <contact@charliejackson.com>",
-    "license": "MIT",
-    "private": true,
-    "dependencies": {
-        "jest": "^23.1.0",
-        "react-dom-model": "*",
-        "react-dom-model-detox": "*",
-        "react-dom-model-selectors": "*"
+  "name": "react-dom-model-tests",
+  "version": "0.1.0",
+  "description": "Whole system tests for react-dom-model packages",
+  "scripts": {
+    "test": "jest"
+  },
+  "main": "index.js",
+  "author": "Charlie Jackson <contact@charliejackson.com>",
+  "license": "MIT",
+  "private": true,
+  "detox": {
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "native/ios/build/Build/Products/Debug-iphonesimulator/reactdommodel.app",
+        "build": "xcodebuild -project native/ios/reactdommodel.xcodeproj -scheme reactdommodel -configuration Debug -sdk iphonesimulator -derivedDataPath native/ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone 7"
       }
+    }
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/jest/setup.js"
+  },
+  "dependencies": {
+    "detox": "^7.4.3",
+    "detox-cli": "^7.4.0",
+    "jest": "^23.1.0",
+    "react-dom-model": "*",
+    "react-dom-model-detox": "*",
+    "react-dom-model-selectors": "*"
   }
-  
+}
