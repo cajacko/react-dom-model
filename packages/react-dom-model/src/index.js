@@ -99,6 +99,6 @@ exports.getTreeJSON = () => {
   return getTree();
 }
 
-const close = require('./standalone');
+const close = require('./react-devtools-core/src/standalone');
 
 exports.close = close;

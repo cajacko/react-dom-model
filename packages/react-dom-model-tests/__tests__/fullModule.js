@@ -1,4 +1,4 @@
-const { isReady, getTreeJSON, close } = require('../packages/react-dom-model/src/index');
+const { isReady, getTreeJSON, close } = require('react-dom-model');
 
 describe('getTreeJSON',() => {
     beforeEach(() => {

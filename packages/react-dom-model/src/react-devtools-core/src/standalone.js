@@ -1,9 +1,7 @@
 var ws = require('ws');
-var Store = require('./Store');
-var Bridge = require('./Bridge');
-const { reactHasLoaded, getStore } = require('./index');
-
-
+var Store = require('../../react-devtools/frontend/Store');
+var Bridge = require('../../react-devtools/agent/Bridge');
+const { reactHasLoaded, getStore } = require('../../index');
 
 function reload(wall) {
   const _bridge = new Bridge(wall);
