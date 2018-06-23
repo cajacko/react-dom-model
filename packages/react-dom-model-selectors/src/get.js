@@ -14,22 +14,20 @@ const getTestIDsBySelector = (selector, { testIDByID }) => {
   return testIDs;
 }
 
+const getElements = (testIDs, dom, get) => {
+  return {
+    testIDs,
+    dom,
+    then: (callback) => {
+      return callback(getElements(testIDs, dom, get), get);
+    }
+  }
+}
+
 const getWithDom = (dom) => (selector) => {
   const testIDs = getTestIDsBySelector(selector, dom);
 
-  // return {
-  //   ...response,
-  //   then: (callback) => {
-  //     return callback(getWithDom(dom));
-  //   }
-  // }
-
-  const response = {
-    testIDs,
-    dom,
-  }
-
-  return response;
+  return getElements(testIDs, dom, getWithDom(dom));
 }
 
 const getWithFunc = (getTreeJSON) => (selector) => {
@@ -57,7 +55,7 @@ const getWithFunc = (getTreeJSON) => (selector) => {
     testIDByID,
     propsById,
     childrenById,
-    typeByID
+    typeByID,
   })(selector);
 }
 

@@ -1,4 +1,4 @@
-const { get } = require("react-dom-model-detox/test");
+const { get, assert } = require("react-dom-model-detox/test");
 
 // #elementID
 // #elementID.elementClass
@@ -19,18 +19,19 @@ const { get } = require("react-dom-model-detox/test");
 // ComponentType.elementClass
 // ComponentType#elementID
 // ComponentType .elementClass
+// .elementClass:nth-child(2)
 
 describe('selectors', () => {
   describe('id\'s', () => {
     describe('When we get a single ID that exists', () => {
       it('returned length is 1', () => {
-        expect(get('#App').length).toBe(1);
+        assert(get('#App')).countIs(1);
       });
     });
 
     describe('When we get a single ID that does not exist', () => {
       it('returned length is 0', () => {
-        expect(get('#DoesNotExist').length).toBe(0);
+        assert(get('#DoesNotExist')).countIs(0);
       });
     });
   });
