@@ -1,14 +1,15 @@
 const shouldUseDOMCache = require('./shouldUseDOMCache');
+const getDOM = require('./getDOM');
 
 let cachedDom = null;
 
-const getTestIDsBySelector = (selector, { testIDByID }) => {
+const getTestIDsBySelector = (selector, { testIDsBySelectorID }) => {
   const testIDs = [];
 
   if (selector.includes('#')) {
     const id = selector.replace('#', '');
 
-    if (testIDByID[id]) return testIDByID[id];
+    if (testIDsBySelectorID[id]) return testIDsBySelectorID[id];
 
     return testIDs;
   }
@@ -30,35 +31,6 @@ const getWithDom = (dom) => (selector) => {
   const testIDs = getTestIDsBySelector(selector, dom);
 
   return getElements(testIDs, dom, getWithDom(dom));
-}
-
-const getDOM = (getTreeJSON) => {
-  const testIDByID = {}; 
-  const propsById = {}; 
-  const childrenById = {}; 
-  const typeByID = {};
-
-  const tree = getTreeJSON(({ component, props, children }) => {
-    if (!props && !props.testID) return;
-    const { testID } = props;
-
-    if (props.selectorID) {
-      if (!testIDByID[props.selectorID]) testIDByID[props.selectorID] = [];
-
-      if (!testIDByID[props.selectorID].includes(testID)) {
-        testIDByID[props.selectorID].push(testID);
-      }
-      
-    }
-  });
-
-  return {
-    tree,
-    testIDByID,
-    propsById,
-    childrenById,
-    typeByID,
-  };
 }
 
 const getTreeJSONOrCache = (getTreeJSON) => {

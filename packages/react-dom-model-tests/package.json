@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "Whole system tests for react-dom-model packages",
   "scripts": {
-    "test": "mocha \"__tests__/**/*\" --file mocha/setup.js --timeout 10000"
+    "test": "yarn mocha \"__tests__/**/*\"",
+    "mocha": "mocha --file mocha/setup.js --timeout 10000"
   },
   "main": "index.js",
   "author": "Charlie Jackson <contact@charliejackson.com>",
