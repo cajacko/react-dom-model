@@ -1,21 +1,8 @@
 const shouldUseDOMCache = require('./shouldUseDOMCache');
 const getDOM = require('./getDOM');
+const getTestIDsBySelector = require('./getTestIDsBySelector');
 
 let cachedDom = null;
-
-const getTestIDsBySelector = (selector, { testIDsBySelectorID }) => {
-  const testIDs = [];
-
-  if (selector.includes('#')) {
-    const id = selector.replace('#', '');
-
-    if (testIDsBySelectorID[id]) return testIDsBySelectorID[id];
-
-    return testIDs;
-  }
-
-  return testIDs;
-}
 
 const getElements = (testIDs, dom, get) => {
   return {

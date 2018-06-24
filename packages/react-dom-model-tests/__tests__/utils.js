@@ -1,5 +1,11 @@
+// react-dom-model-selector
+
 // getProps
 // getChildren
 // getType
-// getDom
+// getDOM
 // getState
+// getParent
+// getTestID
+// getSibling
+// get

@@ -1,4 +1,6 @@
-// Assert then and next get do the right things
+// When run get, can pass a flag to fetch new
+// actions always reset cache when finished
+// otherwise everything is cached by default
 
 const { expect } = require('chai');
 const { get, assert, setUseDOMCache, refreshDOM } = require("react-dom-model-detox/test");

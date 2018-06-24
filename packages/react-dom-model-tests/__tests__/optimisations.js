@@ -1,5 +1,3 @@
-// Assert then and next get do the right things
-
 const { expect } = require('chai');
 const { get, assert } = require("react-dom-model-detox/test");
 

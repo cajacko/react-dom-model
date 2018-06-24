@@ -1,4 +1,5 @@
 let testID = 0;
+// First prop must exist, and must be a unique ID
 
 module.exports = (...classes) => {
     testID += 1;
