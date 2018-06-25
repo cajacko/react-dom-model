@@ -6,8 +6,6 @@ class ExtendElements extends Elements {
     return await new Promise((resolve) => {
       const testID = this.getOnlyTestID();
 
-      console.log('testID',testID);
-
       element(by.id(testID)).tap().then(() => {
         // Allows the dom model time to update
         setTimeout(() => resolve(), 500);

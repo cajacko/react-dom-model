@@ -11,7 +11,6 @@
 // clearText
 // swipe
 
-const { expect } = require('chai');
 const { DOM } = require("react-dom-model-detox/test");
 
 describe('actions', () => {

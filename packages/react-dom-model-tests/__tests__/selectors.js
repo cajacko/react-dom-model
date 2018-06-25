@@ -1,5 +1,4 @@
-const { expect } = require('chai');
-const { get, assert } = require("react-dom-model-detox/test");
+const { DOM } = require("react-dom-model-detox/test");
 
 // #elementID
 // #elementID.elementClass
@@ -26,13 +25,13 @@ describe('selectors', () => {
   describe('id\'s', () => {
     describe('When we get a single ID that exists', () => {
       it('returned length is 1', () => {
-        assert(get('#App')).countIs(1);
+        DOM().find('#App').assert.countIs(1, true);
       });
     });
 
     describe('When we get a single ID that does not exist', () => {
       it('returned length is 0', () => {
-        assert(get('#DoesNotExist')).countIs(0);
+        DOM().find('#DoesNotExist').assert.countIs(0, true);
       });
     });
   });

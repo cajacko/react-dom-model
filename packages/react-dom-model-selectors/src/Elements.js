@@ -31,8 +31,30 @@ class Elements extends Array {
     }
   }
 
-  countIs(count, checkNodes) {
-    if (checkNodes) {
+  countIs(count, groupByTestID) {
+    if (this.nodeID) {
+      if (count === 1) return;
+
+      throw new Error(`You are asserting that a single element has a count of more than 1. That\'s silly.`);
+    }
+
+    if (groupByTestID) {
+      let testIDs = [];
+
+      this.forEach((element) => {
+        const testID = element.getTestID();
+
+        if (!testID) {
+          throw new Error('You are using countIs(count, groupByTestID) with groupByTestID as true. This requires that every component your selector finds is using the selectors export to set the testID');
+        }
+
+        if (!testIDs.includes(testID)) testIDs.push(testID);
+      });
+
+      if (testIDs.length === count) return;
+
+      throw new Error(`Count is: ${this.length}, expected: ${count}. Note groupByTestID has been set to true. So we can only count components using the selectors export`);
+    } else {
       if (this.length === count) return;
 
       throw new Error(`Node count is: ${this.length}, expected: ${count}`);
