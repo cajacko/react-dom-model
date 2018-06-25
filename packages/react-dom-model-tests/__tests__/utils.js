@@ -7,3 +7,4 @@
 // getParent
 // getTestID
 // getSiblings
+// getCount

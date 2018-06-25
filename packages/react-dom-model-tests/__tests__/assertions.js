@@ -1,6 +1,5 @@
 // react-dom-model-selector
 
-// hasClass
 // hasID
 // propExists
 // propEquals

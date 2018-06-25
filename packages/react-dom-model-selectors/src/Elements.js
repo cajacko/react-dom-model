@@ -9,7 +9,7 @@ class Elements extends Array {
     const assert = (func) => (...args) => func(...args);
 
     this.assert = { not: {} };
-    const assertions = ['countIs', 'textIs', 'exists'];
+    const assertions = ['countIs', 'textIs', 'exists', 'hasClass'];
 
     assertions.forEach((assertionFuncName) => {
       this.assert[assertionFuncName] = (...args) => this[assertionFuncName](...args);
@@ -44,34 +44,36 @@ class Elements extends Array {
     }
   }
 
-  countIs(count, groupByTestID) {
-    if (this.nodeID) {
-      if (count === 1) return;
+  getCount(groupByTestID) {
+    if (this.nodeID) return 1;
 
-      throw new Error(`You are asserting that a single element has a count of more than 1. That\'s silly.`);
-    }
+    if (!groupByTestID) return this.length;
+
+    let testIDs = [];
+
+    this.forEach((element) => {
+      const testID = element.getTestID();
+
+      if (!testID) {
+        throw new Error('You are using getCount(groupByTestID) with groupByTestID as true. This requires that every component your selector finds is using the selectors export to set the testID');
+      }
+
+      if (!testIDs.includes(testID)) testIDs.push(testID);
+    });
+
+    return testIDs.length;
+  }
+
+  countIs(count, groupByTestID) {
+    const length = this.getCount(groupByTestID);
+
+    if (length === count) return;
 
     if (groupByTestID) {
-      let testIDs = [];
-
-      this.forEach((element) => {
-        const testID = element.getTestID();
-
-        if (!testID) {
-          throw new Error('You are using countIs(count, groupByTestID) with groupByTestID as true. This requires that every component your selector finds is using the selectors export to set the testID');
-        }
-
-        if (!testIDs.includes(testID)) testIDs.push(testID);
-      });
-
-      if (testIDs.length === count) return;
-
-      throw new Error(`Count is: ${testIDs.length}, expected: ${count}. Note groupByTestID has been set to true. So we can only count components using the selectors export`);
-    } else {
-      if (this.length === count) return;
-
-      throw new Error(`Node count is: ${this.length}, expected: ${count}`);
+      throw new Error(`Count is: ${length}, expected: ${count}. Note groupByTestID has been set to true. So we can only count components using the selectors export`);
     }
+
+    throw new Error(`Node count is: ${length}, expected: ${count}`);
   }
 
   getNode() {
@@ -119,26 +121,50 @@ class Elements extends Array {
   }
 
   textIs(text) {
-    if(this.nodeID) {
-      const node = this.getNode();
+    this.assertSingleOrAtLeastOne((element) => {
+      const { children } = element.getNode();
 
-      if (node.children !== text) {
-        throw new Error(`The given text does match the elements text.\nGiven: ${text}\nReceived: ${String(node.text)}`);
+      if (children !== text) {
+        throw new Error(`The given text does match the elements text.\nGiven: ${text}\nReceived: ${String(children)}`);
       }
-    } else {
-      let textMatches = false;
+    }, `The given text does match any of the elements text.`);
+  }
 
-      this.forEach((elements) => {
-        try {
-          elements.textIs(text);
-          textMatches = true;
-        } catch (e) {}
+  hasClass(className) {
+    this.assertSingleOrAtLeastOne((element) => {
+      const { props } = element.getNode();
+
+      if (!props || !props.selectorClasses || !props.selectorClasses.includes(className)) {
+        throw new Error(`The node does not contain the class ${className}`);
+      }
+    }, `None of the found elements have the class: ${className}`);
+  }
+
+  assertSingleOrAtLeastOne(func, errorText) {
+    if (this.nodeID) {
+      func(this);
+    } else {
+      let atLeastOne = this.atLeastOnePasses((element) => {
+        func(element);
       });
 
-      if (!textMatches) {
-        throw new Error(`The given text does match any of the elements text.`);
+      if (!atLeastOne) {
+        throw new Error(error);
       }
     }
+  }
+
+  atLeastOnePasses(func) {
+    let atLeastOnePasses = false;
+
+    this.forEach((elements) => {
+      try {
+        func(elements);
+        atLeastOnePasses = true;
+      } catch (e) {}
+    });
+
+    return atLeastOnePasses;
   }
 }
 
