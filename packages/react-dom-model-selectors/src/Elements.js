@@ -11,7 +11,7 @@ class Elements extends Array {
     const assert = (func) => (...args) => func(...args);
 
     this.assert = { not: {} };
-    const assertions = ['countIs', 'textIs', 'exists', 'hasClass', 'hasID', 'propExists', 'propEquals'];
+    const assertions = ['countIs', 'textIs', 'exists', 'hasClass', 'hasID', 'propExists', 'propEquals', 'stateKeyExists', 'stateEquals'];
 
     assertions.forEach((assertionFuncName) => {
       this.assert[assertionFuncName] = (...args) => this[assertionFuncName](...args);
@@ -152,19 +152,39 @@ class Elements extends Array {
     }, `None of the found elements have the id: ${id}`);
   }
 
-  propExists(propKey) {
-    this.assertSingleOrAtLeastOne((element) => {
-      const { props } = element.getNode();
-
-      if (!props || props[propKey] === undefined) {
-        throw new Error(`The node does not have the prop: ${propKey}`);
-      }
-    }, `None of the found elements have the prop: ${propKey} specified`);
+  propExists(key) {
+    this.argExists('props', key);
   }
 
   propEquals(key, value) {
+    this.argEquals('props', key, value);
+  }
+
+  stateKeyExists(key) {
+    this.argExists('state', key);
+  }
+
+  stateEquals(key, value) {
+    this.argEquals('state', key, value);
+  }
+
+  argExists(arg, propKey) {
     this.assertSingleOrAtLeastOne((element) => {
-      const { props } = element.getNode();
+      const node = element.getNode();
+
+      const props = node[arg];
+
+      if (!props || props[propKey] === undefined) {
+        throw new Error(`The node does not have the ${arg}: ${propKey}`);
+      }
+    }, `None of the found elements have the ${arg}: ${propKey} specified`);
+  }
+
+  argEquals(arg, key, value) {
+    this.assertSingleOrAtLeastOne((element) => {
+      const node = element.getNode();
+
+      const props = node[arg];
 
       let error = false;
 
@@ -175,9 +195,9 @@ class Elements extends Array {
       };
 
       if (!props || error) {
-        throw new Error(`The nodes ${key} prop does not equal the supplied value`);
+        throw new Error(`The nodes ${key} ${arg} does not equal the supplied value`);
       }
-    }, `None of the found elements have the a "${key}" prop that matches the supplied value`);
+    }, `None of the found elements have the a "${key}" ${arg} that matches the supplied value`);
   }
 
   assertSingleOrAtLeastOne(func, errorText) {

@@ -9,7 +9,11 @@ export default class App extends React.Component {
     super(props);
 
     this.state  = {
-      toggleButtonState: true
+      toggleButtonState: true,
+      testState: {
+        first: true,
+        second: false, 
+      }
     }
   }
 

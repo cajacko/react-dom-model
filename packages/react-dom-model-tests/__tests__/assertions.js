@@ -1,6 +1,4 @@
 // react-dom-model-selector
 
-// propEquals
-// stateEquals
-// stateExists
+// propEquals, stateEquals if no key given
 // textIs
