@@ -1,6 +1,5 @@
 const { DOM } = require("react-dom-model-detox/test");
 
-// class
 // Type
 // nth-child
 // Children chain
@@ -32,6 +31,20 @@ describe('selectors', () => {
     describe('When we get a single class with no elements found', () => {
       it('returns a length of 0', () => {
         DOM().find('.noClasses').assert.countIs(0);
+      });
+    });
+  });
+
+  describe('type', () => {
+    describe('When we get a type with an element found', () => {
+      it('returns a length of 1', () => {
+        DOM().find('App').assert.countIs(1);
+      });
+    });
+
+    describe('When we get a type with no elements found', () => {
+      it('returns a length of 0', () => {
+        DOM().find('UnknownType').assert.countIs(0);
       });
     });
   })

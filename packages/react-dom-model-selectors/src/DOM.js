@@ -76,6 +76,10 @@ class DOM {
       if (this.nodeIDsByClasses[className]) {
         elements.add(this.nodeIDsByClasses[className]);
       }
+    } else {
+      if (this.nodeIDsByType[selector]) {
+        elements.add(this.nodeIDsByType[selector]);
+      }
     }
 
     elements.finishFind();
