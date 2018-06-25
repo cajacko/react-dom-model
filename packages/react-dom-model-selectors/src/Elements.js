@@ -9,7 +9,7 @@ class Elements extends Array {
     const assert = (func) => (...args) => func(...args);
 
     this.assert = { not: {} };
-    const assertions = ['countIs', 'textIs', 'exists', 'hasClass'];
+    const assertions = ['countIs', 'textIs', 'exists', 'hasClass', 'hasID'];
 
     assertions.forEach((assertionFuncName) => {
       this.assert[assertionFuncName] = (...args) => this[assertionFuncName](...args);
@@ -138,6 +138,16 @@ class Elements extends Array {
         throw new Error(`The node does not contain the class ${className}`);
       }
     }, `None of the found elements have the class: ${className}`);
+  }
+
+  hasID(id) {
+    this.assertSingleOrAtLeastOne((element) => {
+      const { props } = element.getNode();
+
+      if (!props || !props.selectorID || props.selectorID !== id) {
+        throw new Error(`The node does not contain the id: ${id}`);
+      }
+    }, `None of the found elements have the id: ${id}`);
   }
 
   assertSingleOrAtLeastOne(func, errorText) {
