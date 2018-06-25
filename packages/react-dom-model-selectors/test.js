@@ -1,5 +1,4 @@
-const { get, resetCache } = require('./src/get');
+const domExport = require('./src/domExport');
 
-exports.get = get
-exports.setUseDOMCache = require('./src/shouldUseDOMCache').set;
-exports.refreshDOM = resetCache;
+exports.Elements = require('./src/Elements');
+exports.DOM = domExport;

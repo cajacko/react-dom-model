@@ -12,15 +12,15 @@
 // swipe
 
 const { expect } = require('chai');
-const { get, assert } = require("react-dom-model-detox/test");
+const { DOM } = require("react-dom-model-detox/test");
 
 describe('actions', () => {
     describe('tap', () => {
         describe('when the toggle button is tapped', () => {
             it('The text changes from yes to no', async () => {
-                assert(get('#ToggleButtonText')).textIs('Yes');
-                await get('#ToggleButton').tap();
-                assert(get('#ToggleButtonText')).textIs('No');
+                DOM().find('#ToggleButtonText').assert.textIs('Yes');
+                await DOM().find('#ToggleButton').tap();
+                DOM().find('#ToggleButtonText').assert.textIs('No');
             });
         });
     });

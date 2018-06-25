@@ -1,4 +1,4 @@
-const { init, reloadApp, cleanup, refreshDOM } = require("react-dom-model-detox/test");
+const { init, reloadApp, cleanup } = require("react-dom-model-detox/test");
 const { detox } = require("../package.json");
 
 before(function () {
@@ -7,7 +7,6 @@ before(function () {
 });
 
 beforeEach(() => {
-  refreshDOM();
   return reloadApp();
 });
 

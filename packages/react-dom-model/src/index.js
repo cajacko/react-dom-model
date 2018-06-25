@@ -16,18 +16,7 @@ exports.setStore = (storeInstance) => {
   store = storeInstance;
 }
 
-const processTree = (tree) => {
-  if (tree.props && tree.props.children) delete tree.props.children;
-
-  return {
-    component: tree.name,
-    props: tree.props,
-    children: tree.children,
-  }
-}
-
-const getTreeWithChildren = (tree1, parser) => {
-  const tree = processTree(tree1);
+const getTreeWithChildren = (tree, parser) => {
   const { children } = tree;
 
   if (!children || !children.length || !Array.isArray(children)) {
@@ -38,7 +27,7 @@ const getTreeWithChildren = (tree1, parser) => {
   tree.children = tree.children.map((id) => {
     const node = store.get(id).toJS();
 
-    if (parser) parser(processTree(node));
+    if (parser) parser(node);
 
     return getTreeWithChildren(node, parser);
   });
