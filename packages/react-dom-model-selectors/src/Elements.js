@@ -9,7 +9,7 @@ class Elements extends Array {
     const assert = (func) => (...args) => func(...args);
 
     this.assert = { not: {} };
-    const assertions = ['countIs', 'textIs', 'exists', 'hasClass', 'hasID'];
+    const assertions = ['countIs', 'textIs', 'exists', 'hasClass', 'hasID', 'propExists'];
 
     assertions.forEach((assertionFuncName) => {
       this.assert[assertionFuncName] = (...args) => this[assertionFuncName](...args);
@@ -150,6 +150,17 @@ class Elements extends Array {
     }, `None of the found elements have the id: ${id}`);
   }
 
+  propExists(propKey) {
+    this.assertSingleOrAtLeastOne((element) => {
+      const { props } = element.getNode();
+
+      if (!props || props[propKey] === undefined) {
+        throw new Error(`The node does not have the prop: ${propKey}`);
+      }
+    }, `None of the found elements have the prop: ${propKey} specified`);
+  }
+
+
   assertSingleOrAtLeastOne(func, errorText) {
     if (this.nodeID) {
       func(this);
@@ -163,7 +174,7 @@ class Elements extends Array {
       }
     }
   }
-
+  
   atLeastOnePasses(func) {
     let atLeastOnePasses = false;
 
