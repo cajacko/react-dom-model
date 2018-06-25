@@ -9,7 +9,7 @@ class Elements extends Array {
     const assert = (func) => (...args) => func(...args);
 
     this.assert = { not: {} };
-    const assertions = ['countIs', 'textIs'];
+    const assertions = ['countIs', 'textIs', 'exists'];
 
     assertions.forEach((assertionFuncName) => {
       this.assert[assertionFuncName] = (...args) => this[assertionFuncName](...args);
