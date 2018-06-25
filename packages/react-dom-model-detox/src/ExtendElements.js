@@ -12,7 +12,18 @@ class ExtendElements extends Elements {
     });
 
     this.assert.isVisible = this.expect('toBeVisible');
-    this.assert.not.isVisible = this.expect('toBeNotVisible');
+    this.assert.not.isVisible = this.toBeNotVisible();
+  }
+
+  toBeNotVisible() {
+    return (...args) => {
+      try {
+        this.assert.not.exists();
+        return Promise.resolve();
+      } catch (e) {
+        return this.expect('toBeNotVisible')(...args);
+      }
+    }
   }
 
   getElement(testID) {

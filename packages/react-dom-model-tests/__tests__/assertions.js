@@ -1,8 +1,3 @@
-// react-dom-model-detox
-
-// isVisible
-// isNotVisible
-
 // react-dom-model-selector
 
 // exists
@@ -35,6 +30,12 @@ describe('assertions', () => {
         it('not.isVisible has no error and isVisible has an error', async () => {
           await DOM().find('.notVisibleAtFirst').assert.not.isVisible();
           await assert.isRejected(DOM().find('.notVisibleAtFirst').assert.isVisible());
+        });
+      });
+
+      describe('When the element does not exist', () => {
+        it('stills asserts as true', async () => {
+          await DOM().find('#DoesNotExist').assert.not.isVisible();
         });
       });
     });
