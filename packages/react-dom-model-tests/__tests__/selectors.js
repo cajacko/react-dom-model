@@ -1,25 +1,11 @@
 const { DOM } = require("react-dom-model-detox/test");
 
-// #elementID
-// #elementID.elementClass
-// #elementID .elementClass
-// #elementID ComponentType
-// #elementID.elementClass ComponentType
-// #elementID ComponentType.elementClass
-// #elementID ComponentType .elementClass
-// .elementClass
-// .elementClass.elementClass2
-// .elementClass .elementClass2
-// .elementClass ComponentType
-// .elementClass #elementID
-// .elementClass#elementID
-// .elementClass ComponentType#elementID
-// .elementClass ComponentType #elementID
-// ComponentType
-// ComponentType.elementClass
-// ComponentType#elementID
-// ComponentType .elementClass
-// .elementClass:nth-child(2)
+// class
+// Type
+// nth-child
+// Children chain
+// Same node chain
+// Complex combinations
 
 describe('selectors', () => {
   describe('id\'s', () => {
@@ -35,4 +21,18 @@ describe('selectors', () => {
       });
     });
   });
+
+  describe('classes', () => {
+    describe('When we get a single class with multiple elements found', () => {
+      it('returns a length of 2', () => {
+        DOM().find('.twoClassesExample').assert.countIs(2, true);
+      });
+    });
+
+    describe('When we get a single class with no elements found', () => {
+      it('returns a length of 0', () => {
+        DOM().find('.noClasses').assert.countIs(0);
+      });
+    });
+  })
 });

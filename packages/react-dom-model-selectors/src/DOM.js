@@ -70,6 +70,12 @@ class DOM {
       if (this.nodeIDsBySelectorID[id]) {
         elements.add(this.nodeIDsBySelectorID[id]);
       }
+    } else if (selector.includes('.')) {
+      const className = selector.replace('.', '');
+  
+      if (this.nodeIDsByClasses[className]) {
+        elements.add(this.nodeIDsByClasses[className]);
+      }
     }
 
     elements.finishFind();

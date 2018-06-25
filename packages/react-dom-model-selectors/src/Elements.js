@@ -53,7 +53,7 @@ class Elements extends Array {
 
       if (testIDs.length === count) return;
 
-      throw new Error(`Count is: ${this.length}, expected: ${count}. Note groupByTestID has been set to true. So we can only count components using the selectors export`);
+      throw new Error(`Count is: ${testIDs.length}, expected: ${count}. Note groupByTestID has been set to true. So we can only count components using the selectors export`);
     } else {
       if (this.length === count) return;
 

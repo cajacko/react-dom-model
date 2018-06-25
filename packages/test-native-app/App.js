@@ -19,9 +19,9 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View style={styles.container} {...selectors('App', 'View')}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
+      <View style={styles.container} {...selectors('App')}>
+        <Text {...selectors(null, 'twoClassesExample')}>Open up App.js to start working on your app!</Text>
+        <Text {...selectors(null, 'twoClassesExample')}>Changes you make will automatically reload.</Text>
         <Text>Shake your phone to open the developer menu.</Text>
         <TouchableHighlight {...selectors('ToggleButton')} onPress={this.onPress}>
           <Text {...selectors('ToggleButtonText')}>{this.state.toggleButtonState ? 'Yes' : 'No'}</Text>
