@@ -1,6 +1,5 @@
 const { DOM } = require("react-dom-model-detox/test");
 
-// Type
 // nth-child
 // Children chain
 // Same node chain

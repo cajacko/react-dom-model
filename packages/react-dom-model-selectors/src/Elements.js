@@ -8,11 +8,24 @@ class Elements extends Array {
 
     const assert = (func) => (...args) => func(...args);
 
-    this.assert = {};
+    this.assert = { not: {} };
     const assertions = ['countIs', 'textIs'];
 
     assertions.forEach((assertionFuncName) => {
       this.assert[assertionFuncName] = (...args) => this[assertionFuncName](...args);
+
+      this.assert.not[assertionFuncName] = (...args) => {
+        let shouldThrow = false;
+
+        try {
+          this[assertionFuncName](...args);
+          shouldThrow = true;
+        } catch (e) {}
+
+        if (shouldThrow) {
+          throw new Error(`assert.${assertionFuncName} ran without an error. We're using "not" so it should have failed`);
+        }
+      }
     });
   }
 
