@@ -3,9 +3,8 @@
 // getProps
 // getChildren
 // getType
-// getDOM
 // getState
 // getParent
 // getTestID
 // getSibling
-// get
+// find

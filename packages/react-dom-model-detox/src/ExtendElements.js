@@ -1,14 +1,20 @@
-const { tap, by, element } = require("detox");
 const { Elements } = require('react-dom-model-selectors/test');
+const { by, element } = require("detox");
 
 class ExtendElements extends Elements {
-  async tap() {
-    return await new Promise((resolve) => {
-      const testID = this.getOnlyTestID();
+  constructor(...args) {
+    super(...args);
 
-      element(by.id(testID)).tap().then(() => {
-        // Allows the dom model time to update
-        setTimeout(() => resolve(), 500);
+    const detoxActions = ['tap', 'scroll', 'scrollTo', 'typeText', 'multiTap', 'longPress', 'tapAtPoint', 'replaceText', 'clearText', 'swipe', 'setColumnToValue'];
+
+    detoxActions.forEach((action) => {
+      this[action] = async (...params) => new Promise((resolve, reject) => {
+        const testID = this.getOnlyTestID();
+
+        element(by.id(testID))[action](...params).then(() => {
+          // Allows the dom model time to update
+          setTimeout(() => resolve(), 500);
+        }).catch(reject);
       });
     });
   }
