@@ -19,7 +19,12 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle} {...selectors('App', 'visibleAtFirst',  'exists')}>
+      <ScrollView 
+        style={styles.container}
+        contentContainerStyle={styles.contentContainerStyle}
+        {...selectors('App', 'visibleAtFirst',  'exists')}
+        testProps={{ first: true, second: false }}
+      >
         <Text {...selectors(null, 'twoClassesExample')}>Open up App.js to start working on your app!</Text>
         <Text {...selectors(null, 'twoClassesExample')}>Changes you make will automatically reload.</Text>
         <Text>Shake your phone to open the developer menu.</Text>

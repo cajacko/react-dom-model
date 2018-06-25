@@ -4,6 +4,8 @@
     "description": "Helpers for locating react-dom-model nodes in a kinda css like way",
     "author": "Charlie Jackson <contact@charliejackson.com>",
     "license": "MIT",
-    "private": false
-  }
-  
+    "private": false,
+    "dependencies": {
+        "chai": "^4.1.2"
+    }
+}

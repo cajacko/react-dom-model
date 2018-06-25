@@ -1,3 +1,5 @@
+const { expect } = require('chai');
+
 class Elements extends Array {
   constructor(DOM, ExtendElements, nodeID) {
     super(0);
@@ -9,7 +11,7 @@ class Elements extends Array {
     const assert = (func) => (...args) => func(...args);
 
     this.assert = { not: {} };
-    const assertions = ['countIs', 'textIs', 'exists', 'hasClass', 'hasID', 'propExists'];
+    const assertions = ['countIs', 'textIs', 'exists', 'hasClass', 'hasID', 'propExists', 'propEquals'];
 
     assertions.forEach((assertionFuncName) => {
       this.assert[assertionFuncName] = (...args) => this[assertionFuncName](...args);
@@ -160,6 +162,23 @@ class Elements extends Array {
     }, `None of the found elements have the prop: ${propKey} specified`);
   }
 
+  propEquals(key, value) {
+    this.assertSingleOrAtLeastOne((element) => {
+      const { props } = element.getNode();
+
+      let error = false;
+
+      try {
+        expect(props[key]).to.deep.equal(value);
+      } catch (e) {
+        error = true;
+      };
+
+      if (!props || error) {
+        throw new Error(`The nodes ${key} prop does not equal the supplied value`);
+      }
+    }, `None of the found elements have the a "${key}" prop that matches the supplied value`);
+  }
 
   assertSingleOrAtLeastOne(func, errorText) {
     if (this.nodeID) {
@@ -170,7 +189,7 @@ class Elements extends Array {
       });
 
       if (!atLeastOne) {
-        throw new Error(error);
+        throw new Error(errorText);
       }
     }
   }
