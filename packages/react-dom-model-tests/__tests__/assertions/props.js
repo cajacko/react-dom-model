@@ -40,7 +40,16 @@ describe('props', () => {
         describe('When asserting an object prop with different key order', () => {
             it('It compares for object equality not for the same instance', async () => {
                 const element = DOM().find('#App');
-                element.assert.propEquals('testProps', { second: false, first: true, });
+                element.assert.propEquals('testProps', { second: false, first: true });
+            });
+        });
+
+        describe('When no key is given', () => {
+            it('asserts against the entire props object', async () => {
+                const element = DOM().find('#Text1');
+                element.assert.propEquals({
+                    exampleProp: true,
+                });
             });
         });
     });

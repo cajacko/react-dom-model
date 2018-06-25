@@ -1,5 +1,15 @@
 const { expect } = require('chai');
 
+const propKeysToDeleteInAssert = [
+  'selectorClasses',
+  'selectorID',
+  'testID',
+  'children',
+  'accessible',
+  'allowFontScaling',
+  'ellipsizeMode'
+];
+
 class Elements extends Array {
   constructor(DOM, ExtendElements, nodeID) {
     super(0);
@@ -180,7 +190,17 @@ class Elements extends Array {
     }, `None of the found elements have the ${arg}: ${propKey} specified`);
   }
 
-  argEquals(arg, key, value) {
+  argEquals(arg, arg1, arg2) {
+    let key;
+    let val;
+
+    if (arg2) {
+      key = arg1;
+      val = arg2;
+    } else {
+      val = arg1;
+    }
+
     this.assertSingleOrAtLeastOne((element) => {
       const node = element.getNode();
 
@@ -189,15 +209,30 @@ class Elements extends Array {
       let error = false;
 
       try {
-        expect(props[key]).to.deep.equal(value);
+        if (!key) {
+          propKeysToDeleteInAssert.forEach((propKey) => {
+            delete props[propKey]
+          });
+
+          expect(props).to.deep.equal(val);
+        } else {
+          expect(props[key]).to.deep.equal(val);
+        }
       } catch (e) {
         error = true;
       };
 
       if (!props || error) {
+        if (key) {
+          throw new Error(`The nodes ${arg} does not equal the supplied value`);
+        }
+        
         throw new Error(`The nodes ${key} ${arg} does not equal the supplied value`);
       }
-    }, `None of the found elements have the a "${key}" ${arg} that matches the supplied value`);
+    }, key ? 
+      `None of the found elements have the a "${key}" ${arg} that matches the supplied value` : 
+      `None of the found elements have ${arg} that matches the supplied value`
+    );
   }
 
   assertSingleOrAtLeastOne(func, errorText) {

@@ -43,5 +43,18 @@ describe('state', () => {
                 element.assert.stateEquals('testState', { second: false, first: true, });
             });
         });
+
+        describe('When no key is given', () => {
+            it('asserts against the entire state object', async () => {
+                const element = DOM().find('App');
+                element.assert.stateEquals({
+                    toggleButtonState: true,
+                    testState: {
+                        first: true,
+                        second: false, 
+                    }
+                });
+            });
+        });
     });
 });

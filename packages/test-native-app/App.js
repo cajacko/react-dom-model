@@ -29,7 +29,7 @@ export default class App extends React.Component {
         {...selectors('App', 'visibleAtFirst',  'exists')}
         testProps={{ first: true, second: false }}
       >
-        <Text {...selectors(null, 'twoClassesExample')}>Open up App.js to start working on your app!</Text>
+        <Text {...selectors('Text1', 'twoClassesExample')} exampleProp={true}>Open up App.js to start working on your app!</Text>
         <Text {...selectors(null, 'twoClassesExample')}>Changes you make will automatically reload.</Text>
         <Text>Shake your phone to open the developer menu.</Text>
         <TouchableHighlight {...selectors('ToggleButton')} onPress={this.onPress}>
