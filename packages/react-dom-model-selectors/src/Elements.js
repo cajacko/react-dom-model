@@ -87,21 +87,21 @@ class Elements extends Array {
 
     this.exists();
 
-    const testID = this.getTestID();
+    let testID = this.getTestID();
       
     if (!testID) {
       this.forEach((element) => {
-          const elementTestID = element.getTestID();
-  
-          if (!testID && elementTestID) {
+        const elementTestID = element.getTestID();
+
+        if (!testID && elementTestID) {
           testID = elementTestID;
-          } else if (testID && elementTestID && testID !== elementTestID) {
+        } else if (testID && elementTestID && testID !== elementTestID) {
           throw new Error('Multiple Test ID\'s found for elements with the given selector. This action can only be made on 1 testID. Focus your selector to pick just 1');
-          }
+        }
       });
   
       if (!testID) {
-          throw new Error('No testID found for the given selector. This action requires that you use selectors export to put an id on an element');
+        throw new Error('No testID found for the given selector. This action requires that you use selectors export to put an id on an element');
       }
     }
 

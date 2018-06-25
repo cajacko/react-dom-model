@@ -20,6 +20,16 @@ const { expect } = require('chai');
 const { DOM } = require("react-dom-model-detox/test");
 
 describe('assertions', () => {
+  describe('visible', () => {
+    describe('isVisible', () => { 
+      describe('When the element is visible', () => {
+        it('Has no error', async () => {
+          await DOM().find('#App').assert.isVisible();
+        });
+      });
+    });
+  });
+
   describe('countIs', () => {
     describe('When counting the nodes', () => {
       it('The returned count is correct and higher that counting grouped by testID', () => {
