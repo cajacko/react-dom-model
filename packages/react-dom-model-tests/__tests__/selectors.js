@@ -59,12 +59,12 @@ describe('selectors', () => {
   })
 
   // TODO: More of these
-  // describe('Combining selectors on the same  node', () => {
-  //   describe('When we combine a type and an ID', () => {
-  //     it('Count is 1 and has the expected ID', () => {
-  //       const element = DOM().find('App#App');
-  //       element.assert.countIs(1);
-  //     });
-  //   })
-  // });
+  describe('Combining selectors on the same  node', () => {
+    describe('When we combine a type and an ID', () => {
+      it('Count is 1 and has the expected ID', () => {
+        const element = DOM().find('ScrollView#App');
+        element.assert.countIs(1);
+      });
+    })
+  });
 });

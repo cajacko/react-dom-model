@@ -75,10 +75,10 @@ class DOM {
 
     let nodeIds = [];
 
-    const hasNodes = !ancestorSelectors.find((sameNodeSelectors, j) => {
+    const hasNodes = !ancestorSelectors.find((sameNodeSelectors) => {
       let sameNodeSelectorNodeId = [];
 
-      const filterSameNodes = (newNodes) => {
+      const filterSameNodes = (newNodes, j) => {
         if (j === 0) {
           sameNodeSelectorNodeId = newNodes;
         } else {
@@ -93,14 +93,14 @@ class DOM {
           const id = sameNodeSelector.replace('#', '');
       
           if (this.nodeIDsBySelectorID[id]) {
-            filterSameNodes(this.nodeIDsBySelectorID[id]);
+            filterSameNodes(this.nodeIDsBySelectorID[id], i);
             return false;
           }
         } else if (sameNodeSelector.includes('.')) {
           const className = sameNodeSelector.replace('.', '');
       
           if (this.nodeIDsByClasses[className]) {
-            filterSameNodes(this.nodeIDsByClasses[className]);
+            filterSameNodes(this.nodeIDsByClasses[className], i);
             return false;
           }
         } else if (sameNodeSelector.includes(':')) {
@@ -126,7 +126,7 @@ class DOM {
           if (sameNodeSelectorNodeId.length) return false;
         } else {
           if (this.nodeIDsByType[sameNodeSelector]) {
-            filterSameNodes(this.nodeIDsByType[sameNodeSelector]);
+            filterSameNodes(this.nodeIDsByType[sameNodeSelector], i);
             return false;
           }
         }
