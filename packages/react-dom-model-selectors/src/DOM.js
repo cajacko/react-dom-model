@@ -16,9 +16,9 @@ class DOM {
     this.testIDByNodeID = {};
     this.classesByNodeID = {};
     this.typeByNodeID = {};
-    this.childrenNodeIDsByNodeID = {}; 
+    this.childrenNodeIDsByNodeID = {};
     this.parentNodeIDByNodeID = {};
-    
+
     this.addNode = this.addNode.bind(this);
   }
 
@@ -29,7 +29,7 @@ class DOM {
   }
 
   addNode(node) {
-    const { id, name, children, props: { testID, selectorID, selectorClasses } } = node;
+    const { id, name, children, props } = node;
 
     this.nodeByNodeID[id] = node;
     this.addToPropArray('nodeIDsByType', name, id);
@@ -46,21 +46,25 @@ class DOM {
       });
     }
 
-    if (testID) {
-      this.addToPropArray('nodeIDsByTestID', testID, id);
-      this.testIDByNodeID[id] = testID;
-    }
+    if (props) {
+      const { testID, selectorID, selectorClasses } = props;
 
-    if (selectorID) {
-      this.addToPropArray('nodeIDsBySelectorID', selectorID, id);
-      this.selectorIDByNodeID[id] = selectorID;
-    }
+      if (testID) {
+        this.addToPropArray('nodeIDsByTestID', testID, id);
+        this.testIDByNodeID[id] = testID;
+      }
 
-    if (selectorClasses) {
-      selectorClasses.forEach((selectorClass) => {
-        this.addToPropArray('nodeIDsByClasses', selectorClass, id);
-        this.addToPropArray('classesByNodeID', id, selectorClass);
-      })
+      if (selectorID) {
+        this.addToPropArray('nodeIDsBySelectorID', selectorID, id);
+        this.selectorIDByNodeID[id] = selectorID;
+      }
+
+      if (selectorClasses) {
+        selectorClasses.forEach(selectorClass => {
+          this.addToPropArray('nodeIDsByClasses', selectorClass, id);
+          this.addToPropArray('classesByNodeID', id, selectorClass);
+        });
+      }
     }
   }
 
@@ -69,9 +73,12 @@ class DOM {
 
     const ancestorSelectors = [];
 
-    selector.split(' ').forEach((ancestors) => {
-      const separatedAncestor = ancestors.replace('.', ' .').replace('#', ' #').replace(':', ' :');
-      const sameNodeSelectors = separatedAncestor.split(' ').filter((string) => string !== '');
+    selector.split(' ').forEach(ancestors => {
+      const separatedAncestor = ancestors
+        .replace('.', ' .')
+        .replace('#', ' #')
+        .replace(':', ' :');
+      const sameNodeSelectors = separatedAncestor.split(' ').filter(string => string !== '');
 
       ancestorSelectors.push(sameNodeSelectors);
     });
@@ -85,34 +92,36 @@ class DOM {
         if (j === 0) {
           sameNodeSelectorNodeId = newNodes;
         } else {
-          sameNodeSelectorNodeId = sameNodeSelectorNodeId.filter((nodeID) => {
-            return newNodes.includes(nodeID);
-          });
+          sameNodeSelectorNodeId = sameNodeSelectorNodeId.filter(nodeID =>
+            newNodes.includes(nodeID)
+          );
         }
-      }
+      };
 
       const nothingFound = !!sameNodeSelectors.find((sameNodeSelector, i) => {
         if (sameNodeSelector.includes('#')) {
           const id = sameNodeSelector.replace('#', '');
-      
+
           if (this.nodeIDsBySelectorID[id]) {
             filterSameNodes(this.nodeIDsBySelectorID[id], i);
             return false;
           }
         } else if (sameNodeSelector.includes('.')) {
           const className = sameNodeSelector.replace('.', '');
-      
+
           if (this.nodeIDsByClasses[className]) {
             filterSameNodes(this.nodeIDsByClasses[className], i);
             return false;
           }
         } else if (sameNodeSelector.includes(':')) {
           if (!sameNodeSelector.includes(':nth-child')) {
-            throw new Error('If a selector contains a ":" it is expected to read ":nth-child(x)" with a number instead of the x');
+            throw new Error(
+              'If a selector contains a ":" it is expected to read ":nth-child(x)" with a number instead of the x'
+            );
           }
 
           if (i === 0) {
-            throw new Error(':nth-child can\'t be the first statement in a selector block');
+            throw new Error(":nth-child can't be the first statement in a selector block");
           }
 
           const nthChild = sameNodeSelector.match(/(\d+\.?\d*)/g)[0];
@@ -121,17 +130,15 @@ class DOM {
           if (isNaN(position)) {
             throw new Error(`Could not get int from ${sameNodeSelector}`);
           }
-          
-          sameNodeSelectorNodeId = sameNodeSelectorNodeId.filter((nodeID) => {
-            return this.positionByNodeID[nodeID] === position;
-          });
+
+          sameNodeSelectorNodeId = sameNodeSelectorNodeId.filter(
+            nodeID => this.positionByNodeID[nodeID] === position
+          );
 
           if (sameNodeSelectorNodeId.length) return false;
-        } else {
-          if (this.nodeIDsByType[sameNodeSelector]) {
-            filterSameNodes(this.nodeIDsByType[sameNodeSelector], i);
-            return false;
-          }
+        } else if (this.nodeIDsByType[sameNodeSelector]) {
+          filterSameNodes(this.nodeIDsByType[sameNodeSelector], i);
+          return false;
         }
 
         return true;
@@ -142,7 +149,7 @@ class DOM {
       if (k === 0) {
         nodeIds = sameNodeSelectorNodeId;
         return false;
-      } 
+      }
 
       nodeIds = this.filterAncestors(nodeIds, sameNodeSelectorNodeId);
 
@@ -161,9 +168,9 @@ class DOM {
   }
 
   filterAncestors(ancestorNodeIDs, childrenNodeIDs) {
-    return childrenNodeIDs.filter((nodeID) => {
-      return this.nodeIDHasAtLeastOneAncestorNodeID(nodeID, ancestorNodeIDs);
-    });
+    return childrenNodeIDs.filter(nodeID =>
+      this.nodeIDHasAtLeastOneAncestorNodeID(nodeID, ancestorNodeIDs)
+    );
 
     return childrenNodeIDs;
   }
