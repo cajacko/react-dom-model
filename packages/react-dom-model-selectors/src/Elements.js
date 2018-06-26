@@ -261,6 +261,26 @@ class Elements extends Array {
 
     return atLeastOnePasses;
   }
+
+  getProps(allowMultiple) {
+    if (this.nodeID) {
+      return this.getNode().props;
+    }
+
+    this.exists();
+
+    if (this.length === 1) {
+      return this[0].getProps();
+    }
+
+    if (!allowMultiple) {
+      throw new Error('Multiple elements found for the given selector, pass true to getProps(true) to return all the props as an array. Or narrow your selector');
+    }
+
+    return this.map((element) => {
+      return element.getProps(allowMultiple);
+    });
+  }
 }
 
 module.exports = Elements;

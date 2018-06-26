@@ -2,7 +2,6 @@
 
 // element
 
-// getProps
 // getNode
 // getChildren
 // getType
