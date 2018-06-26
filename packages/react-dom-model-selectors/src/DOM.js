@@ -7,21 +7,16 @@ class DOM {
   constructor(ExtendElements) {
     this.Elements = ExtendElements || Elements;
     this.nodeByNodeID = {};
-    // this.propsByNodeID = {};
-    // this.stateByNodeID = {};
     this.nodeIDsByTestID = {};
     this.nodeIDsBySelectorID = {};
     this.nodeIDsByClasses = {};
     this.nodeIDsByType = {};
-    // this.textByNodeID = {};
-    // this.allChildrenNodeIDsByNodeIDs = {};
+    this.positionByNodeID = {};
     this.selectorIDByNodeID = {};
     this.testIDByNodeID = {};
     this.classesByNodeID = {};
     this.typeByNodeID = {};
-    this.childrenNodeIDsByNodeID = {};
-    // this.parentNodeIDByNodeID = {};
-    // this.siblingNodeIDsByNodeID = {};    
+    this.childrenNodeIDsByNodeID = {}; 
     
     this.addNode = this.addNode.bind(this);
   }
@@ -40,7 +35,12 @@ class DOM {
     this.typeByNodeID[id] = name;
 
     if (children) {
-      this.childrenNodeIDsByNodeID[id] = children;
+      const childrenArray = Array.isArray(children) ? children : [children];
+      this.childrenNodeIDsByNodeID[id] = childrenArray;
+
+      childrenArray.forEach((nodeID, i) => {
+        this.positionByNodeID[nodeID] = i + 1;
+      });
     }
 
     if (testID) {
@@ -64,22 +64,86 @@ class DOM {
   find(selector) {
     const elements = new this.Elements(this, this.Elements);
 
-    if (selector.includes('#')) {
-      const id = selector.replace('#', '');
-  
-      if (this.nodeIDsBySelectorID[id]) {
-        elements.add(this.nodeIDsBySelectorID[id]);
+    const ancestorSelectors = [];
+
+    selector.split(' ').forEach((ancestors) => {
+      const separatedAncestor = ancestors.replace('.', ' .').replace('#', ' #').replace(':', ' :');
+      const sameNodeSelectors = separatedAncestor.split(' ').filter((string) => string !== '');
+
+      ancestorSelectors.push(sameNodeSelectors);
+    });
+
+    let nodeIds = [];
+
+    const hasNodes = !ancestorSelectors.find((sameNodeSelectors, j) => {
+      let sameNodeSelectorNodeId = [];
+
+      const filterSameNodes = (newNodes) => {
+        if (j === 0) {
+          sameNodeSelectorNodeId = newNodes;
+        } else {
+          sameNodeSelectorNodeId = sameNodeSelectorNodeId.filter((nodeID) => {
+            return newNodes.includes(nodeID);
+          });
+        }
       }
-    } else if (selector.includes('.')) {
-      const className = selector.replace('.', '');
-  
-      if (this.nodeIDsByClasses[className]) {
-        elements.add(this.nodeIDsByClasses[className]);
-      }
-    } else {
-      if (this.nodeIDsByType[selector]) {
-        elements.add(this.nodeIDsByType[selector]);
-      }
+
+      const nothingFound = !!sameNodeSelectors.find((sameNodeSelector, i) => {
+        if (sameNodeSelector.includes('#')) {
+          const id = sameNodeSelector.replace('#', '');
+      
+          if (this.nodeIDsBySelectorID[id]) {
+            filterSameNodes(this.nodeIDsBySelectorID[id]);
+            return false;
+          }
+        } else if (sameNodeSelector.includes('.')) {
+          const className = sameNodeSelector.replace('.', '');
+      
+          if (this.nodeIDsByClasses[className]) {
+            filterSameNodes(this.nodeIDsByClasses[className]);
+            return false;
+          }
+        } else if (sameNodeSelector.includes(':')) {
+          if (!sameNodeSelector.includes(':nth-child')) {
+            throw new Error('If a selector contains a ":" it is expected to read ":nth-child(x)" with a number instead of the x');
+          }
+
+          if (i === 0) {
+            throw new Error(':nth-child can\'t be the first statement in a selector block');
+          }
+
+          const nthChild = sameNodeSelector.match(/(\d+\.?\d*)/g)[0];
+          const position = parseInt(nthChild, 10);
+
+          if (isNaN(position)) {
+            throw new Error(`Could not get int from ${sameNodeSelector}`);
+          }
+          
+          sameNodeSelectorNodeId = sameNodeSelectorNodeId.filter((nodeID) => {
+            return this.positionByNodeID[nodeID] === position;
+          });
+
+          if (sameNodeSelectorNodeId.length) return false;
+        } else {
+          if (this.nodeIDsByType[sameNodeSelector]) {
+            filterSameNodes(this.nodeIDsByType[sameNodeSelector]);
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      if (nothingFound) return true;
+
+      // Combine nodes if ancestors
+      nodeIds = nodeIds.concat(sameNodeSelectorNodeId);
+
+      return false;
+    });
+
+    if (hasNodes) {
+      elements.add(nodeIds);
     }
 
     elements.finishFind();
