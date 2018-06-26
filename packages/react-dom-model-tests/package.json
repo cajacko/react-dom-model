@@ -1,6 +1,6 @@
 {
   "name": "react-dom-model-tests",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Whole system tests for react-dom-model packages",
   "scripts": {
     "test": "yarn mocha \"__tests__/**/*\"",
@@ -24,6 +24,6 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "mocha": "^5.2.0",
-    "react-dom-model-detox": "^0.1.0"
+    "react-dom-model-detox": "^0.1.1"
   }
 }
