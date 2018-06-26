@@ -13,8 +13,7 @@ describe('countIs', () => {
 
   describe('When counting nodes with a specific selector', () => {
       it('Has a count of 1', () => {
-          // TODO: enable
-        // DOM().find('View#App').assert.countIs(1);
+        DOM().find('ScrollView#App').assert.countIs(1);
       });
   });
 

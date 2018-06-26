@@ -2,26 +2,25 @@ const { expect, assert } = require('chai');
 const { DOM } = require("react-dom-model-detox/test");
 
 describe('hasClass', () => {
-    // TODO: When have single selectors
-    // describe('When a single element has a class', () => {
-    //     it('Asserts for hasClass and fails for not.hasClass', () => {
-    //         const element = DOM().find('.twoClassesExample');
+    describe('When a single element has a class', () => {
+        it('Asserts for hasClass and fails for not.hasClass', () => {
+            const element = DOM().find('Text.text1Class');
 
-    //         element.assert.countIs(1);
-    //         element.assert.hasClass('twoClassesExample');
-    //         expect(() => element.assert.not.hasClass('twoClassesExample')).to.throw();
-    //     });
-    // });
+            element.assert.countIs(1);
+            element.assert.hasClass('twoClassesExample');
+            expect(() => element.assert.not.hasClass('twoClassesExample')).to.throw();
+        });
+    });
 
-    // describe('When a single element does not have a class', () => {
-    //     it('Fails for hasClass and asserts for not.hasClass', () => {
-    //         const element = DOM().find('.twoClassesExample');
+    describe('When a single element does not have a class', () => {
+        it('Fails for hasClass and asserts for not.hasClass', () => {
+            const element = DOM().find('Text.text1Class');
 
-    //         element.assert.countIs(1);
-    //         element.assert.not.hasClass('notAClass');
-    //         expect(() => element.assert.hasClass('notAClass')).to.throw();
-    //     });
-    // });
+            element.assert.countIs(1);
+            element.assert.not.hasClass('notAClass');
+            expect(() => element.assert.hasClass('notAClass')).to.throw();
+        });
+    });
 
     describe('When a single element has a class in a multiple selection', () => {
         it('Asserts for hasClass and fails for not.hasClass', () => {
