@@ -35,7 +35,12 @@ export default class App extends React.Component {
         <TouchableHighlight {...selectors('ToggleButton')} onPress={this.onPress}>
           <Text {...selectors('ToggleButtonText')}>{this.state.toggleButtonState ? 'Yes' : 'No'}</Text>
         </TouchableHighlight>
-        <View style={styles.spacing} />
+        <View style={styles.spacing}  {...selectors(null, 'parentClass')}>
+          <Text {...selectors('childClassID1', 'childClass')}>Child Class</Text>
+        </View>
+        <View>
+          <Text {...selectors('childClassID2', 'childClass')}>Child Class</Text>
+        </View>
         <Text {...selectors(null, 'notVisibleAtFirst')}>Shake your phone to open the developer menu.</Text>
       </ScrollView>
     );

@@ -17,6 +17,7 @@ class DOM {
     this.classesByNodeID = {};
     this.typeByNodeID = {};
     this.childrenNodeIDsByNodeID = {}; 
+    this.parentNodeIDByNodeID = {};
     
     this.addNode = this.addNode.bind(this);
   }
@@ -40,6 +41,8 @@ class DOM {
 
       childrenArray.forEach((nodeID, i) => {
         this.positionByNodeID[nodeID] = i + 1;
+
+        this.parentNodeIDByNodeID[nodeID] = id;
       });
     }
 
@@ -75,7 +78,7 @@ class DOM {
 
     let nodeIds = [];
 
-    const hasNodes = !ancestorSelectors.find((sameNodeSelectors) => {
+    const hasNodes = !ancestorSelectors.find((sameNodeSelectors, k) => {
       let sameNodeSelectorNodeId = [];
 
       const filterSameNodes = (newNodes, j) => {
@@ -136,8 +139,14 @@ class DOM {
 
       if (nothingFound) return true;
 
-      // Combine nodes if ancestors
-      nodeIds = nodeIds.concat(sameNodeSelectorNodeId);
+      if (k === 0) {
+        nodeIds = sameNodeSelectorNodeId;
+        return false;
+      } 
+
+      nodeIds = this.filterAncestors(nodeIds, sameNodeSelectorNodeId);
+
+      if (!nodeIds.length) return true;
 
       return false;
     });
@@ -149,6 +158,24 @@ class DOM {
     elements.finishFind();
 
     return elements;
+  }
+
+  filterAncestors(ancestorNodeIDs, childrenNodeIDs) {
+    return childrenNodeIDs.filter((nodeID) => {
+      return this.nodeIDHasAtLeastOneAncestorNodeID(nodeID, ancestorNodeIDs);
+    });
+
+    return childrenNodeIDs;
+  }
+
+  nodeIDHasAtLeastOneAncestorNodeID(nodeID, ancestorNodeIDs) {
+    const parentID = this.parentNodeIDByNodeID[nodeID];
+
+    if (!parentID) return false;
+
+    if (ancestorNodeIDs.includes(parentID)) return true;
+
+    return this.nodeIDHasAtLeastOneAncestorNodeID(parentID, ancestorNodeIDs);
   }
 }
 

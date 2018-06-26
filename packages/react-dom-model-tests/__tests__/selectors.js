@@ -64,7 +64,21 @@ describe('selectors', () => {
       it('Count is 1 and has the expected ID', () => {
         const element = DOM().find('ScrollView#App');
         element.assert.countIs(1);
+        element.assert.hasID('App');
       });
     })
   });
+
+  // TODO: More of these
+  describe('Nested selectors', () => {
+    describe('When we nest classes', () => {
+      it('Count is 1 and has the expected ID', () => {
+        const element = DOM().find('.parentClass .childClass');
+        element.assert.countIs(1, true);
+        element.assert.hasID('childClassID1');
+      });
+    })
+  });
+
+  // TODO: Mix of all selectors
 });
