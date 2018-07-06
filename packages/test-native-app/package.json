@@ -1,6 +1,6 @@
 {
   "name": "reactdommodel",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "devDependencies": {
     "babel-preset-react-native-stage-0": "^1.0.1",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "react": "16.3.1",
-    "react-dom-model-detox": "^0.1.1",
+    "react-dom-model-detox": "^0.2.0",
     "react-native": "~0.55.2"
   }
 }
