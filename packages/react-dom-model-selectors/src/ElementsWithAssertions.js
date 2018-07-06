@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const ElementsBase = require('./ElementsBase');
+const waitFor = require('./waitFor');
 
 const propKeysToDeleteInAssert = [
   'selectorClasses',
@@ -18,24 +19,60 @@ class ElementsWithAssertions extends ElementsBase {
     const assert = (func) => (...args) => func(...args);
 
     this.assert = { not: {} };
+
     const assertions = ['countIs', 'textIs', 'exists', 'hasClass', 'hasID', 'propExists', 'propEquals', 'stateKeyExists', 'stateEquals'];
 
     assertions.forEach((assertionFuncName) => {
-      this.assert[assertionFuncName] = (...args) => this[assertionFuncName](...args);
+      this.addAssertion(assertionFuncName,  (...args) => this[assertionFuncName](...args));
+    });
 
-      this.assert.not[assertionFuncName] = (...args) => {
-        let shouldThrow = false;
+    this.assert.waitFor = (timeout = 5000) => {
+      const waitForAssert = { not: {} };
 
+      Object.keys(this.assert).forEach((key) => {
+        if (key === 'waitFor' || key === 'not') return;
+
+        waitForAssert[key] = waitFor(this.assert[key], timeout);
+      });
+
+      Object.keys(this.assert.not).forEach((key) => {
+        if (key === 'waitFor' || key === 'not') return;
+
+        waitForAssert.not[key] = waitFor(this.assert.not[key], timeout);
+      });
+
+      return waitForAssert;
+    }
+  }
+
+  addAssertion(key, func, notFunc) {
+    const assert = (localFunc, isNot) => (...args) => {
+      const doAssert = () => {
         try {
-          this[assertionFuncName](...args);
-          shouldThrow = true;
-        } catch (e) {}
+          const promise = localFunc(...args);
 
-        if (shouldThrow) {
-          throw new Error(`assert.${assertionFuncName} ran without an error. We're using "not" so it should have failed`);
+          return Promise.resolve(promise);
+        } catch (e) {
+          return Promise.reject(e);
         }
       }
-    });
+
+      if (!isNot) return doAssert();
+
+      return doAssert().then(() => {
+        return new Error(`assert.${key} ran without an error. We're using "not" so it should have failed`);
+      }).catch(() => null).then((error) => {
+        if (error) throw error;
+      });
+    }
+
+    this.assert[key] = assert(func);
+
+    if (notFunc) {
+      this.assert.not[key] = assert(notFunc);
+    } else {
+      this.assert.not[key] = assert(func, true);
+    }
   }
 
   countIs(count, groupByTestID) {

@@ -13,13 +13,13 @@
 
 const { DOM } = require("react-dom-model-detox/test");
 
-describe('actions', () => {
-    describe('tap', () => {
-        describe('when the toggle button is tapped', () => {
+describe('actions', async () => {
+    describe('tap', async () => {
+        describe('when the toggle button is tapped', async () => {
             it('The text changes from yes to no', async () => {
-                DOM().find('#ToggleButtonText').assert.textIs('Yes');
+                await DOM().find('#ToggleButtonText').assert.textIs('Yes');
                 await DOM().find('#ToggleButton').tap();
-                DOM().find('#ToggleButtonText').assert.textIs('No');
+                await DOM().find('#ToggleButtonText').assert.textIs('No');
             });
         });
     });

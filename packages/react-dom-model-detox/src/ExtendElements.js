@@ -1,4 +1,4 @@
-const { Elements } = require('react-dom-model-selectors/test');
+const { Elements, DOM } = require('react-dom-model-selectors/test');
 const { by, element, expect } = require("detox");
 
 class ExtendElements extends Elements {
@@ -11,17 +11,44 @@ class ExtendElements extends Elements {
       this[action] = this.delayedAction(action);
     });
 
-    this.assert.isVisible = this.expect('toBeVisible');
-    this.assert.not.isVisible = this.toBeNotVisible();
+    this.addAssertion('isVisible', this.expect('toBeVisible'), this.toBeNotVisible());
+  }
+
+  scrollUntilIsVisible(DOM, selector, scrollIncrements = 400, timeout = 10000) {
+    const startTime = Date.now();
+    DOM().find(selector).assert.exists();
+
+    const isVisisble = () => {
+      const element = DOM().find(selector);
+      return element.assert.isVisible().then(() => true).catch(() => false);
+    };
+
+    const loop = () => {
+      return isVisisble().then((elementIsVisible) => {
+        const now = Date.now();
+
+        if (now - startTime > timeout) {
+          return Promise.reject(new Error('Timeout'));
+        }
+
+        if (elementIsVisible) return Promise.resolve();
+
+        return this.scroll(scrollIncrements, 'down').then(loop);
+      });
+    }
+
+    return loop();
   }
 
   toBeNotVisible() {
     return (...args) => {
+      const checkNotVisible = () => this.expect('toBeNotVisible')(...args);
+
       try {
-        this.assert.not.exists();
-        return Promise.resolve();
+        const promise = this.assert.not.exists();
+        return Promise.resolve(promise).catch(() => checkNotVisible());
       } catch (e) {
-        return this.expect('toBeNotVisible')(...args);
+        return checkNotVisible();
       }
     }
   }
