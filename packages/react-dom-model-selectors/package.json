@@ -1,6 +1,6 @@
 {
     "name": "react-dom-model-selectors",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Helpers for locating react-dom-model nodes in a kinda css like way",
     "author": "Charlie Jackson <contact@charliejackson.com>",
     "license": "MIT",
