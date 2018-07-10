@@ -96,33 +96,43 @@ class ElementsWithAssertions extends ElementsBase {
   }
 
   textIs(text) {
+    const texts = [];
     this.assertSingleOrAtLeastOne((element) => {
       const { children } = element.getNode();
+
+      texts.push(children);
 
       if (children !== text) {
         throw this.error(`The given text does match the elements text.\nGiven: ${text}\nReceived: ${String(children)}`, {expected: text, received: children});
       }
-    }, `The given text does match any of the elements text.`);
+    }, `The given text does match any of the elements text.`, {expected: text, received: texts});
   }
 
   hasClass(className) {
+    const classes = [];
     this.assertSingleOrAtLeastOne((element) => {
       const { props } = element.getNode();
 
       if (!props || !props.selectorClasses || !props.selectorClasses.includes(className)) {
+        classes.push(props.selectorClasses);
+
         throw this.error(`The node does not contain the class ${className}`, { class: className });
       }
-    }, `None of the found elements have the class: ${className}`);
+    }, `None of the found elements have the class: ${className}`, { class: className, classes: classes });
   }
 
   hasID(id) {
+    const ids = [];
+
     this.assertSingleOrAtLeastOne((element) => {
       const { props } = element.getNode();
 
       if (!props || !props.selectorID || props.selectorID !== id) {
+        ids.push(props.selectorID);
+
         throw this.error(`The node does not contain the id: ${id}`, { id: id });
       }
-    }, `None of the found elements have the id: ${id}`);
+    }, `None of the found elements have the id: ${id}`, { id: id, ids: ids});
   }
 
   propExists(key) {
@@ -150,7 +160,7 @@ class ElementsWithAssertions extends ElementsBase {
       if (!props || props[propKey] === undefined) {
         throw this.error(`The node does not have the ${arg}: ${propKey}`, { [arg]: propKey });
       }
-    }, `None of the found elements have the ${arg}: ${propKey} specified`);
+    }, `None of the found elements have the ${arg}: ${propKey} specified`, { [arg]: propKey });
   }
 
   argEquals(arg, arg1, arg2) {
@@ -187,10 +197,10 @@ class ElementsWithAssertions extends ElementsBase {
 
       if (!props || error) {
         if (key) {
-          throw this.error(`The nodes ${arg} does not equal the supplied value`);
+          throw this.error(`The nodes ${key} ${arg} does not equal the supplied value`, { [key]: props[key], expected: val });
         }
         
-        throw this.error(`The nodes ${key} ${arg} does not equal the supplied value`);
+        throw this.error(`The nodes ${arg} does not equal the supplied value`, { [arg]: props, expected: val });
       }
     }, key ? 
       `None of the found elements have the a "${key}" ${arg} that matches the supplied value` : 
@@ -198,7 +208,7 @@ class ElementsWithAssertions extends ElementsBase {
     );
   }
 
-  assertSingleOrAtLeastOne(func, errorText) {
+  assertSingleOrAtLeastOne(func, errorText, errorProps) {
     if (this.nodeID) {
       func(this);
     } else {
@@ -207,7 +217,7 @@ class ElementsWithAssertions extends ElementsBase {
       });
 
       if (!atLeastOne) {
-        throw this.error(errorText);
+        throw this.error(errorText, errorProps);
       }
     }
   }
