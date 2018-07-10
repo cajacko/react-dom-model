@@ -26,7 +26,7 @@ class ElementsWithAssertions extends ElementsBase {
       this.addAssertion(assertionFuncName,  (...args) => this[assertionFuncName](...args));
     });
 
-    this.assert.waitFor = (timeout = 5000) => {
+    this.assert.waitFor = (timeout = this.timeout || 5000) => {
       const waitForAssert = { not: {} };
 
       Object.keys(this.assert).forEach((key) => {

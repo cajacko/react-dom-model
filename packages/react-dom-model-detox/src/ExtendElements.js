@@ -1,5 +1,6 @@
 const { Elements, DOM } = require('react-dom-model-selectors/test');
 const { by, element, expect } = require("detox");
+const defaultActionTimeout = require('./defaultActionTimeout');
 
 class ExtendElements extends Elements {
   constructor(...args) {
@@ -14,7 +15,7 @@ class ExtendElements extends Elements {
     this.addAssertion('isVisible', this.expect('toBeVisible'), this.toBeNotVisible());
   }
 
-  scrollUntilIsVisible(DOM, selector, scrollIncrements = 400, timeout = 10000) {
+  scrollUntilIsVisible(DOM, selector, scrollIncrements = 400, timeout = this.timeout || 10000) {
     const startTime = Date.now();
     DOM().find(selector).assert.exists();
 
@@ -58,22 +59,9 @@ class ExtendElements extends Elements {
   }
 
   delayedAction(action) {
-    return async (...params) => {
-      const lastParam = params.length && params[params.length - 1];
-
-      const options = {
-        timeout: 500 
-      };
-
-      if (typeof lastParam === 'object' && lastParam.timeout) {
-        options = Object.assign(options, lastParam);
-        params.splice(params.length - 1);
-      }
-
-      return this.delayedPromise((testID) => {
-        return this.getElement(testID)[action](...params);
-      }, options.timeout);
-    };
+    return async (...params) => this.delayedPromise((testID) => {
+      return this.getElement(testID)[action](...params);
+    }, this.timeout || defaultActionTimeout.get());
   }
 
   expect(action) {
@@ -84,7 +72,7 @@ class ExtendElements extends Elements {
     };
   }
 
-  delayedPromise(callback, timeout = 500) {
+  delayedPromise(callback, timeout) {
     return new Promise((resolve, reject) => {
       const testID = this.getOnlyTestID();
 

@@ -122,6 +122,11 @@ class ElementsBase extends Array {
     
       return new Error(errorMessage);
     }
+
+    withTimeout(timeout) {
+      this.timeout = timeout;
+      return this;
+    }
   }
   
   module.exports = ElementsBase;
