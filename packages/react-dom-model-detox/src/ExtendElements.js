@@ -15,7 +15,11 @@ class ExtendElements extends Elements {
     this.addAssertion('isVisible', this.expect('toBeVisible'), this.toBeNotVisible());
   }
 
+
+
   scrollUntilIsVisible(DOM, selector, scrollIncrements = 400, timeout = this.timeout || 10000) {
+    this.setShouldDelayActions(false);
+
     const startTime = Date.now();
     DOM().find(selector).assert.exists();
 
@@ -38,7 +42,19 @@ class ExtendElements extends Elements {
       });
     }
 
-    return loop();
+    const response = (shouldResolve) => (data) => {
+      this.setShouldDelayActions(true);
+
+      if (shouldResolve) return Promise.resolve(data);
+
+      return Promise.reject(data);
+    }
+
+    return loop().then(response(true)).catch(response(false));
+  }
+
+  setShouldDelayActions(shouldDelayActions) {
+    this.shouldDelayActions = shouldDelayActions;
   }
 
   toBeNotVisible() {
@@ -61,7 +77,7 @@ class ExtendElements extends Elements {
   delayedAction(action) {
     return async (...params) => this.delayedPromise((testID) => {
       return this.getElement(testID)[action](...params);
-    }, this.timeout || defaultActionTimeout.get());
+    }, this.timeout || defaultActionTimeout.get(), !this.shouldDelayActions);
   }
 
   expect(action) {
@@ -72,13 +88,17 @@ class ExtendElements extends Elements {
     };
   }
 
-  delayedPromise(callback, timeout) {
+  delayedPromise(callback, timeout, skipDelay) {
     return new Promise((resolve, reject) => {
       const testID = this.getOnlyTestID();
 
       callback(testID).then(() => {
-        // Allows the dom model time to update
-        setTimeout(() => resolve(), timeout);
+        if (skipDelay) {
+          resolve();
+        } else {
+          // Allows the dom model time to update
+          setTimeout(() => resolve(), timeout);
+        }
       }).catch(reject);
     });
   }
