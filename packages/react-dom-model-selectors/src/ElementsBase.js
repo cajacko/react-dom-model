@@ -102,7 +102,7 @@ class ElementsBase extends Array {
     }
 
     error(message, additionalProps) {
-      let errorMessage = message;
+      let errorMessage = `\n\n${message}`;
     
       const props = additionalProps || {};
     
@@ -116,9 +116,9 @@ class ElementsBase extends Array {
         propKeys.forEach((prop) => {
           errorMessage = `${errorMessage}\n - ${prop}: ${String(props[prop])}`;
         });
-    
-        errorMessage = `${errorMessage}\n`;
       }
+
+      errorMessage = `${errorMessage}\n\n`;
     
       return new Error(errorMessage);
     }
