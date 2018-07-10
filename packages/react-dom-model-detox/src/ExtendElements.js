@@ -29,7 +29,7 @@ class ExtendElements extends Elements {
         const now = Date.now();
 
         if (now - startTime > timeout) {
-          return Promise.reject(new Error('Timeout'));
+          return Promise.reject(this.error(`scrollUntilIsVisible timed out for selector: ${selector}`, { isVisibleSelector: selector }));
         }
 
         if (elementIsVisible) return Promise.resolve();
@@ -55,7 +55,7 @@ class ExtendElements extends Elements {
   }
 
   getElement(testID) {
-    return element(by.id(testID))
+    return element(by.id(testID));
   }
 
   delayedAction(action) {
@@ -68,7 +68,7 @@ class ExtendElements extends Elements {
     return async (...params) => {
       const testID = this.getOnlyTestID();
 
-      return expect(this.getElement(testID))[action](...params);
+      return expect(this.getElement(testID))[action](...params).catch(this.rejectError({ action: action }));
     };
   }
 

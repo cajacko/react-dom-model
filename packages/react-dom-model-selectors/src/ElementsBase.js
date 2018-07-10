@@ -123,6 +123,10 @@ class ElementsBase extends Array {
       return new Error(errorMessage);
     }
 
+    rejectError(props) {
+      return (e) => Promise.reject(this.error(e.message, props));
+    }
+
     withTimeout(timeout) {
       this.timeout = timeout;
       return this;
