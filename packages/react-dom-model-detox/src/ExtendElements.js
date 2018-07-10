@@ -6,6 +6,8 @@ class ExtendElements extends Elements {
   constructor(...args) {
     super(...args);
 
+    this.shouldDelayActions = true;
+
     const detoxActions = ['tap', 'scroll', 'scrollTo', 'typeText', 'multiTap', 'longPress', 'tapAtPoint', 'replaceText', 'clearText', 'swipe', 'setColumnToValue'];
 
     detoxActions.forEach((action) => {
