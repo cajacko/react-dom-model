@@ -1,9 +1,10 @@
 const Elements = require('./Elements');
 
 class ElementsBase extends Array {
-    constructor(DOM, ExtendElements, nodeID) {
+    constructor(DOM, ExtendElements, selector, nodeID) {
       super(0);
-  
+      
+      this.selector = selector;
       this.DOM = DOM;
       this.ExtendElements = ExtendElements || Elements;
       this.nodeID = nodeID;
@@ -12,7 +13,7 @@ class ElementsBase extends Array {
     add(nodeIDs) {
       if (nodeIDs && nodeIDs.length) {
         nodeIDs.forEach((nodeID) => {
-          const element = new this.ExtendElements(this.DOM, this.ExtendElements, nodeID)
+          const element = new this.ExtendElements(this.DOM, this.ExtendElements, this.selector, nodeID)
           this.push(element);
         });
       }
@@ -35,7 +36,7 @@ class ElementsBase extends Array {
         const testID = element.getTestID();
   
         if (!testID) {
-          throw new Error('You are using getCount(groupByTestID) with groupByTestID as true. This requires that every component your selector finds is using the selectors export to set the testID');
+          throw this.error('You are using getCount(groupByTestID) with groupByTestID as true. This requires that every component your selector finds is using the selectors export to set the testID');
         }
   
         if (!testIDs.includes(testID)) testIDs.push(testID);
@@ -66,12 +67,12 @@ class ElementsBase extends Array {
           if (!testID && elementTestID) {
             testID = elementTestID;
           } else if (testID && elementTestID && testID !== elementTestID) {
-            throw new Error('Multiple Test ID\'s found for elements with the given selector. This action can only be made on 1 testID. Focus your selector to pick just 1');
+            throw this.error('Multiple Test ID\'s found for elements with the given selector. This action can only be made on 1 testID. Focus your selector to pick just 1');
           }
         });
     
         if (!testID) {
-          throw new Error('No testID found for the given selector. This action requires that you use selectors export to put an id on an element');
+          throw this.error('No testID found for the given selector. This action requires that you use selectors export to put an id on an element');
         }
       }
   
@@ -92,12 +93,34 @@ class ElementsBase extends Array {
       }
   
       if (!allowMultiple) {
-        throw new Error('Multiple elements found for the given selector, pass true to getProps(true) to return all the props as an array. Or narrow your selector');
+        throw this.error('Multiple elements found for the given selector, pass true to getProps(true) to return all the props as an array. Or narrow your selector');
       }
   
       return this.map((element) => {
         return element.getProps(allowMultiple);
       });
+    }
+
+    error(message, additionalProps) {
+      let errorMessage = message;
+    
+      const props = additionalProps || {};
+    
+      if (this.selector) props.selector = this.selector;
+    
+      const propKeys = Object.keys(props);
+    
+      if (propKeys.length) {
+        errorMessage = `${errorMessage}\n\nWith props:\n`;
+        
+        propKeys.forEach((prop) => {
+          errorMessage = `${errorMessage}\n - ${prop}: ${String(props[prop])}`;
+        });
+    
+        errorMessage = `${errorMessage}\n`;
+      }
+    
+      return new Error(errorMessage);
     }
   }
   

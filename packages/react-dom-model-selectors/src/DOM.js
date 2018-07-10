@@ -69,7 +69,7 @@ class DOM {
   }
 
   find(selector) {
-    const elements = new this.Elements(this, this.Elements);
+    const elements = new this.Elements(this, this.Elements, selector);
 
     const ancestorSelectors = [];
 

@@ -60,7 +60,7 @@ class ElementsWithAssertions extends ElementsBase {
       if (!isNot) return doAssert();
 
       return doAssert().then(() => {
-        return new Error(`assert.${key} ran without an error. We're using "not" so it should have failed`);
+        return this.error(`assert.${key} ran without an error. We're using "not" so it should have failed.`, { assertion: key });
       }).catch(() => null).then((error) => {
         if (error) throw error;
       });
@@ -81,17 +81,17 @@ class ElementsWithAssertions extends ElementsBase {
     if (length === count) return;
 
     if (groupByTestID) {
-      throw new Error(`Count is: ${length}, expected: ${count}. Note groupByTestID has been set to true. So we can only count components using the selectors export`);
+      throw this.error(`Count is: ${length}, expected: ${count}. Note groupByTestID has been set to true. So we can only count components using the selectors export`, { expectedCount: count, actualCount: length });
     }
 
-    throw new Error(`Node count is: ${length}, expected: ${count}`);
+    throw this.error(`Node count is: ${length}, expected: ${count}`);
   }
 
   exists() {
     if (this.nodeID) return;
 
     if (this.length < 1) {
-      throw new Error('No elements exist for the given selector');
+      throw this.error(`No elements exist for the given selector: ${this.selector}`);
     }
   }
 
@@ -100,7 +100,7 @@ class ElementsWithAssertions extends ElementsBase {
       const { children } = element.getNode();
 
       if (children !== text) {
-        throw new Error(`The given text does match the elements text.\nGiven: ${text}\nReceived: ${String(children)}`);
+        throw this.error(`The given text does match the elements text.\nGiven: ${text}\nReceived: ${String(children)}`, {expected: text, received: children});
       }
     }, `The given text does match any of the elements text.`);
   }
@@ -110,7 +110,7 @@ class ElementsWithAssertions extends ElementsBase {
       const { props } = element.getNode();
 
       if (!props || !props.selectorClasses || !props.selectorClasses.includes(className)) {
-        throw new Error(`The node does not contain the class ${className}`);
+        throw this.error(`The node does not contain the class ${className}`, { class: className });
       }
     }, `None of the found elements have the class: ${className}`);
   }
@@ -120,7 +120,7 @@ class ElementsWithAssertions extends ElementsBase {
       const { props } = element.getNode();
 
       if (!props || !props.selectorID || props.selectorID !== id) {
-        throw new Error(`The node does not contain the id: ${id}`);
+        throw this.error(`The node does not contain the id: ${id}`, { id: id });
       }
     }, `None of the found elements have the id: ${id}`);
   }
@@ -148,7 +148,7 @@ class ElementsWithAssertions extends ElementsBase {
       const props = node[arg];
 
       if (!props || props[propKey] === undefined) {
-        throw new Error(`The node does not have the ${arg}: ${propKey}`);
+        throw this.error(`The node does not have the ${arg}: ${propKey}`, { [arg]: propKey });
       }
     }, `None of the found elements have the ${arg}: ${propKey} specified`);
   }
@@ -187,10 +187,10 @@ class ElementsWithAssertions extends ElementsBase {
 
       if (!props || error) {
         if (key) {
-          throw new Error(`The nodes ${arg} does not equal the supplied value`);
+          throw this.error(`The nodes ${arg} does not equal the supplied value`);
         }
         
-        throw new Error(`The nodes ${key} ${arg} does not equal the supplied value`);
+        throw this.error(`The nodes ${key} ${arg} does not equal the supplied value`);
       }
     }, key ? 
       `None of the found elements have the a "${key}" ${arg} that matches the supplied value` : 
@@ -207,7 +207,7 @@ class ElementsWithAssertions extends ElementsBase {
       });
 
       if (!atLeastOne) {
-        throw new Error(errorText);
+        throw this.error(errorText);
       }
     }
   }
