@@ -58,9 +58,22 @@ class ExtendElements extends Elements {
   }
 
   delayedAction(action) {
-    return async (...params) => this.delayedPromise((testID) => {
-      return this.getElement(testID)[action](...params);
-    });
+    return async (...params) => {
+      const lastParam = params.length && params[params.length - 1];
+
+      const options = {
+        timeout: 500 
+      };
+
+      if (typeof lastParam === 'object' && lastParam.timeout) {
+        options = Object.assign(options, lastParam);
+        params.splice(params.length - 1);
+      }
+
+      return this.delayedPromise((testID) => {
+        return this.getElement(testID)[action](...params);
+      }, options.timeout);
+    };
   }
 
   expect(action) {
@@ -71,13 +84,13 @@ class ExtendElements extends Elements {
     };
   }
 
-  delayedPromise(callback) {
+  delayedPromise(callback, timeout = 500) {
     return new Promise((resolve, reject) => {
       const testID = this.getOnlyTestID();
 
       callback(testID).then(() => {
         // Allows the dom model time to update
-        setTimeout(() => resolve(), 500);
+        setTimeout(() => resolve(), timeout);
       }).catch(reject);
     });
   }

@@ -17,8 +17,11 @@ module.exports = (func, timeout = 5000) => {
         const now = Date.now();
 
         if (now - startTime > timeout) {
+          const errorMessage = `waitFor exceeded timeout of ${timeout}.`;
+          console.error(errorMessage);
           console.error(error);
-          reject(new Error(`Exceeded timeout of ${timeout}`));
+
+          reject(new Error(`${errorMessage} Check logs above for more info`));
           return;
         }
 
