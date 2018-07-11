@@ -24,5 +24,4 @@ matrix:
         - brew install applesimutils
         - yarn global add detox-cli
       script:
-        - cd packages/react-dom-model-tests && detox build --configuration ios.sim.debug
         - yarn test

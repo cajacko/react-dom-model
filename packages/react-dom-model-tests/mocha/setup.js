@@ -15,7 +15,7 @@ process.on("rejectionHandled", () => {
 });
 
 before(function () {
-  this.timeout(60 * 1000);
+  this.timeout(5 * 60 * 1000);
   return init(detox);
 });
 
