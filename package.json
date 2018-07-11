@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "npm modules for getting the react dom as a JS object, finding nodes anddoing things with them for functional testing",
   "scripts": {
-    "test": "jest",
+    "test": "cd packages/react-dom-model-tests && yarn test",
     "postinstall": "lerna bootstrap"
   },
   "main": "index.js",
