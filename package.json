@@ -6,11 +6,14 @@
     "test": "cd packages/react-dom-model-tests && yarn test",
     "postinstall": "lerna bootstrap --concurrency=1"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "main": "index.js",
   "author": "Charlie Jackson <contact@charliejackson.com>",
   "license": "MIT",
   "private": true,
-  "dependencies": {
-    "lerna": "^2.11.0"
+  "devDependencies": {
+    "lerna": "2.5.1"
   }
 }
