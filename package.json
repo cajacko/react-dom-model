@@ -4,7 +4,7 @@
   "description": "npm modules for getting the react dom as a JS object, finding nodes anddoing things with them for functional testing",
   "scripts": {
     "test": "cd packages/react-dom-model-tests && yarn test",
-    "postinstall": "lerna bootstrap --concurrency=1"
+    "postinstall": "lerna bootstrap --concurrency=1 --mutex network"
   },
   "workspaces": [
     "packages/*"
