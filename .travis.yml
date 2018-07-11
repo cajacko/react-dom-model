@@ -12,6 +12,7 @@ before_install:
   - npm install
   - npm install -g yarn
   - yarn
+  - yarn run bootstrap --concurrency=1
 
 matrix:
   include:
