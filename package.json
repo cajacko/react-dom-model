@@ -9,5 +9,8 @@
   "main": "index.js",
   "author": "Charlie Jackson <contact@charliejackson.com>",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "lerna": "^2.11.0"
+  }
 }
