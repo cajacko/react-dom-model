@@ -3,20 +3,25 @@ const { isReady, waitForIsReady } = require('./connections');
 let store = null;
 let close = null;
 
+console.log('react-dom-model - 1');
+
 exports.waitForIsReady = waitForIsReady;
 exports.isReady = isReady;
 
 exports.init = () => {
+  console.log('react-dom-model - 2');
   close = require('./react-devtools-core/src/standalone');
 
   return waitForIsReady();
 }
 
 exports.setStore = (storeInstance) => {
+  console.log('react-dom-model - 3');
   store = storeInstance;
 }
 
 const getTreeWithChildren = (tree, parser) => {
+  console.log('react-dom-model - 4');
   const { children } = tree;
 
   if (!children || !children.length || !Array.isArray(children)) {
@@ -36,6 +41,7 @@ const getTreeWithChildren = (tree, parser) => {
 }
 
 const getTree = (parser) => {
+  console.log('react-dom-model - 5');
   if (!store) throw new Error('getTree called when store is not set, use the isReady promise to check we\'re good to go');
 
   var roots = store.roots;
@@ -54,9 +60,11 @@ const getTree = (parser) => {
 }
 
 exports.getTreeJSON = (parser) => {
+  console.log('react-dom-model - 6');
   return getTree(parser);
 }
 
 exports.close = () => {
+  console.log('react-dom-model - 7');
   if (close) close();
 }
