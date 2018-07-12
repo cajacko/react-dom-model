@@ -112,8 +112,8 @@ function startServer(port = 8097) {
     // console.error('Failed to start the DevTools server', e);
     restartTimeout = setTimeout(() => {
       console.log('react-dom-model - 43');
-      return startServer(port), 1000);
-    });
+      return startServer(port);
+    }, 1000);
   });
 
   httpServer.on('error', e => {
