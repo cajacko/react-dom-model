@@ -1,6 +1,8 @@
-const { Elements, DOM } = require('react-dom-model-selectors/test');
+const { Elements, DOM, refreshDOM } = require('react-dom-model-selectors/test');
 const { by, element, expect } = require("detox");
 const defaultActionTimeout = require('./defaultActionTimeout');
+
+const preventRefreshDOMActions = ['scroll', 'scrollTo'];
 
 class ExtendElements extends Elements {
   constructor(...args) {
@@ -77,9 +79,11 @@ class ExtendElements extends Elements {
   }
 
   delayedAction(action) {
+    const shouldRefreshDOM = !preventRefreshDOMActions.includes(action);
+
     return async (...params) => this.delayedPromise((testID) => {
       return this.getElement(testID)[action](...params);
-    }, this.timeout || defaultActionTimeout.get(), !this.shouldDelayActions);
+    }, this.timeout || defaultActionTimeout.get(), !this.shouldDelayActions, shouldRefreshDOM);
   }
 
   expect(action) {
@@ -90,16 +94,24 @@ class ExtendElements extends Elements {
     };
   }
 
-  delayedPromise(callback, timeout, skipDelay) {
+  delayedPromise(callback, timeout, skipDelay, shouldRefreshDOM) {
     return new Promise((resolve, reject) => {
+      const refresh = () => {
+        if (shouldRefreshDOM) refreshDOM();
+      }
+
       const testID = this.getOnlyTestID();
 
       callback(testID).then(() => {
         if (skipDelay) {
+          refresh();
           resolve();
         } else {
           // Allows the dom model time to update
-          setTimeout(() => resolve(), timeout);
+          setTimeout(() => {
+            refresh();
+            resolve();
+          }, timeout);
         }
       }).catch(reject);
     });
