@@ -121,8 +121,8 @@ function startServer(port = 8097) {
     onError(e);
     restartTimeout = setTimeout(() => {
       console.log('react-dom-model - 45');
-      return startServer(port), 1000);
-    });
+      return startServer(port);
+    }, 1000);
   });
 
   httpServer.listen(port);
