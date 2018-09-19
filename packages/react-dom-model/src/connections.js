@@ -18,7 +18,6 @@ const setIsReadyPromise = () => {
   isReadyPromise = new Promise((resolve) => {
     if (isReady()) {
       resolvePromises();
-    } else {
     }
 
     resolvers.push(() => {
