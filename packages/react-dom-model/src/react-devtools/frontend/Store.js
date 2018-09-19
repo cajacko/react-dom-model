@@ -1,10 +1,16 @@
 var {EventEmitter} = require('events');
 var {Map, Set, List} = require('immutable');
 var assign = require('object-assign');
+var intervals = require('../../intervals');
+
+var storeID = 0;
 
 class Store extends EventEmitter {
   constructor(bridge) {
     super();
+
+    this.storeID = storeID;
+    storeID += 1;
 
     this._nodes = new Map();
     this._parents = new Map();
@@ -67,23 +73,27 @@ class Store extends EventEmitter {
   // Private stuff
   _establishConnection() {
     var tries = 0;
-    var requestInt;
+
+    intervals.clear(this.storeID);
+
     this._bridge.once('capabilities', capabilities => {
-      clearInterval(requestInt);
+      intervals.clear(this.storeID);
       this.capabilities = assign(this.capabilities, capabilities);
       this.emit('connected');
     });
+
     this._bridge.send('requestCapabilities');
-    requestInt = setInterval(() => {
+
+    intervals.set(this.storeID, setInterval(() => {
       tries += 1;
       if (tries > 100) {
         console.error('failed to connect');
-        clearInterval(requestInt);
+        intervals.clear(this.storeID);
         this.emit('connection failed');
         return;
       }
       this._bridge.send('requestCapabilities');
-    }, 500);
+    }, 500));
   }
 
   _mountComponent(data) {

@@ -1,4 +1,5 @@
 const { isReady, waitForIsReady } = require('./connections');
+const { clearAll } = require('./intervals');
 
 let store = null;
 let close = null;
@@ -59,6 +60,8 @@ exports.getTreeJSON = (parser) => {
 }
 
 exports.close = () => {
+  clearAll();
+
   if (close) return close();
 
   return Promise.resolve();

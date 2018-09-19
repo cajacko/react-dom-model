@@ -57,21 +57,28 @@ function initialize(socket) {
 }
 
 var restartTimeout = null;
+var terminateAll = {};
+var serverID = 0;
 
 function startServer(port = 8097) {
+  var thisServerID = serverID;
+  serverID += 1;
   var httpServer = require('http').createServer();
   var server = new ws.Server({ server: httpServer });
   var connected = false;
+
   server.on('connection', socket => {
     if (connected) {
-      connected.close();
+      connected.terminate();
       // console.warn(
       //   'Only one connection allowed at a time.',
       //   'Closing the previous connection'
       // );
     }
+
     connected = socket;
     socket.onerror = err => {
+      connected.terminate();
       connected = false;
       onDisconnected();
       // console.error('Error with websocket connection', err);
@@ -88,14 +95,82 @@ function startServer(port = 8097) {
     onError(e);
     // console.error('Failed to start the DevTools server', e);
     restartTimeout = setTimeout(() => {
-      return startServer(port);
+      terminate();
+      startServer(port);
     }, 1000);
   });
+
+  var httpConnections = {};
+  var httpConnectionID = 0;
+
+  httpServer.on('connection', connection => {
+    var id = httpConnectionID;
+    httpConnectionID += 1;
+    
+    httpConnections[id] = connection;
+
+    connection.on('close', () => {
+      delete httpConnections[id];
+    });
+  });
+
+  var terminate = () => {
+    delete terminateAll[thisServerID];
+    return new Promise((resolve, reject) => {
+      try {
+        connected = false;
+        onDisconnected();
+        clearTimeout(restartTimeout);
+        var hasClosedHttpServer = false;
+        var hasClosedServer = false;
+        var hasClosedConnection = false;
+        var hasClosedHttpConnections = false;
+
+        var resolveIfAllClosed = () => {
+          if (hasClosedHttpServer || hasClosedServer || hasClosedConnection || hasClosedHttpConnections) resolve();
+        }
+
+        Object.keys(httpConnections).forEach((id) => {
+          var connection = httpConnections[id];
+          hasClosedHttpConnections = true;
+          connection.end();
+          connection.destroy();
+          resolveIfAllClosed();
+          delete httpConnections[id];
+        });
+
+        httpServer.close(() => {
+          hasClosedHttpServer = true;
+          resolveIfAllClosed();
+        });
+
+        if (connected) {
+          connected.terminate();
+
+          hasClosedConnection = true;
+            resolveIfAllClosed();
+        } else {
+          hasClosedConnection = true;
+          resolveIfAllClosed();
+        }
+
+        server.close(() => {
+          hasClosedServer = true;
+          resolveIfAllClosed();
+        });
+      } catch(e) {
+        reject(e);
+      }
+    });
+  }
+
+  terminateAll[thisServerID] = terminate;
 
   httpServer.on('error', e => {
     onError(e);
     restartTimeout = setTimeout(() => {
-      return startServer(port);
+      terminate();
+      startServer(port);
     }, 1000);
   });
 
@@ -103,11 +178,13 @@ function startServer(port = 8097) {
 
   return {
     close: function() {
-      connected = false;
-      onDisconnected();
-      clearTimeout(restartTimeout);
-      server.close();
-      httpServer.close();
+      const promises = [];
+
+      Object.values(terminateAll).forEach((func) => {
+        promises.push(func());
+      });
+
+      return Promise.all(promises);
     },
   };
 }
