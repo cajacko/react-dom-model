@@ -29,6 +29,8 @@ class DOM {
   }
 
   addNode(node) {
+    if (!node) return;
+    
     const { id, name, children, props } = node;
 
     this.nodeByNodeID[id] = node;
