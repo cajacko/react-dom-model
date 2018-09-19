@@ -5,7 +5,7 @@ const { get, set } = require('./cachedDOM');
 module.exports = (getTreeJSON, ExtendDOM, ExtendElements) => () => {
     const cachedDOM = get();
 
-    if (useDOMCache.get() && cachedDom) return cachedDom;
+    if (useDOMCache.get() && cachedDOM) return cachedDOM;
 
     const dom = ExtendDOM ? new ExtendDOM(ExtendElements) : new DOM(ExtendElements);
 

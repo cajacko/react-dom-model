@@ -2,7 +2,7 @@ let cachedDOM = null;
 
 exports.get = () => cachedDOM;
 
-exports.set = () => {
+exports.set = (dom) => {
     cachedDOM = dom;
 }
 
