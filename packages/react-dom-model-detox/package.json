@@ -1,6 +1,6 @@
 {
     "name": "react-dom-model-detox",
-    "version": "0.4.2",
+    "version": "0.5.0",
     "description": "A wrapper around detox that makes it easier to control and assert a react native application for functional testing",
     "author": "Charlie Jackson <contact@charliejackson.com>",
     "license": "MIT",
